@@ -1,0 +1,32 @@
+version: "3.8"
+
+networks:
+  ships-backend-network:
+    name: ships-backend-network
+    driver: bridge
+
+services:
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    environment:
+      - REDIS_PASSWORD=pass
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_REDIS_PASSWORD=pass
+      - SPRING_REDIS_PORT=6379
+      - SPRING_REDIS_HOST=localhost
+    restart: always
+    networks:
+      - ships-backend-network
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    depends_on:
+      - redis
