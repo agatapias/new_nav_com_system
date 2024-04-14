@@ -39,8 +39,18 @@ private fun MainScreenContent() {
             factory = {
                 map.apply {
                     getMapAsync { mapboxMap ->
-                        mapboxMap.setStyle(Style.Builder().fromUri("asset://local_style.json")) {
+                        mapboxMap.setStyle(Style.Builder().fromUri("https://demotiles.maplibre.org/style.json")) {
                             Log.d("Map", "Map is ready")
+                        }
+                        mapboxMap.addMarker(
+                            MarkerOptions()
+                                .position(LatLng(12.33, 14.88))
+                                .setTitle("Yes")
+//                                .setSnippet(markerSnippet)
+                        )
+                        mapboxMap.setOnMarkerClickListener { marker ->
+                            Log.d("Map", "Marker clicked!")
+                            true
                         }
                     }
                 }
