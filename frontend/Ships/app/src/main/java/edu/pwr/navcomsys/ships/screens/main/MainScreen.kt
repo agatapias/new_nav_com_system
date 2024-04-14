@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -21,15 +23,34 @@ import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.Style
 import edu.pwr.navcomsys.ships.R
+import edu.pwr.navcomsys.ships.ui.component.Loader
+import edu.pwr.navcomsys.ships.ui.component.LoaderWrapper
 import edu.pwr.navcomsys.ships.ui.theme.Dimensions
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MainScreen() {
-    MainScreenContent()
+    val viewModel: MainViewModel = koinViewModel()
+    val uiState by viewModel.uiState.collectAsState()
+    val uiInteraction = MainUiInteraction.default(viewModel)
+    MainScreenContent(
+        uiState = uiState,
+        uiInteraction = uiInteraction
+    )
 }
 
 @Composable
-private fun MainScreenContent() {
+private fun MainScreenContent(
+    uiState: MainUiState,
+    uiInteraction: MainUiInteraction
+) {
+    if (uiState.isLoading) {
+        Loader(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+    }
+    MarkerPopUp(
+        isVisible = uiState.isPopUpVisible,
+        onClose = uiInteraction::onClosePopUp
+    )
     Box {
         val map = rememberMapViewLifecycle()
         AndroidView(
@@ -38,9 +59,13 @@ private fun MainScreenContent() {
                 .zIndex(0f),
             factory = {
                 map.apply {
+                    Log.d("Map", "getMapAsync")
                     getMapAsync { mapboxMap ->
-                        mapboxMap.setStyle(Style.Builder().fromUri("https://demotiles.maplibre.org/style.json")) {
+                        mapboxMap.setStyle(
+                            Style.Builder().fromUri("https://demotiles.maplibre.org/style.json")
+                        ) {
                             Log.d("Map", "Map is ready")
+                            uiInteraction.onMapLoaded()
                         }
                         mapboxMap.addMarker(
                             MarkerOptions()
@@ -50,6 +75,7 @@ private fun MainScreenContent() {
                         )
                         mapboxMap.setOnMarkerClickListener { marker ->
                             Log.d("Map", "Marker clicked!")
+                            uiInteraction.onShipClick(marker)
                             true
                         }
                     }
@@ -59,7 +85,9 @@ private fun MainScreenContent() {
             }
         )
         ShipsListFloatingButton(
-            modifier = Modifier.align(Alignment.BottomEnd).padding(Dimensions.space20),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(Dimensions.space20),
             onClick = {}
         )
     }

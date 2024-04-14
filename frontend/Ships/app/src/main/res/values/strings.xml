@@ -4,4 +4,11 @@
     <string name="s2">Messages screen</string>
     <string name="s3">Main screen</string>
     <string name="s4">Account screen</string>
+    <string name="s5">Statek</string>
+    <string name="s6">Aktualne położenie</string>
+    <string name="s7">Lat</string>
+    <string name="s8">Lon</string>
+    <string name="s9">Opis</string>
+    <string name="s10">Zadzwoń</string>
+    <string name="s11">Napisz</string>
 </resources>
