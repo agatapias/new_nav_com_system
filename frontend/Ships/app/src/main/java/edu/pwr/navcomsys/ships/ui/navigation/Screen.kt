@@ -27,7 +27,7 @@ sealed class Screen(
 
     object Messages : Screen(
         path = "messages",
-        icon = R.drawable.ic_bottle,
+        icon = R.drawable.ic_message,
         description = R.string.s2,
         tag = "messages"
     )

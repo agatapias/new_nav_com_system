@@ -65,29 +65,28 @@ fun BottomNavigationBar(
             ) {
                 NavigationBar {
                     bottomNavItems.forEach { screen ->
-                        val iconSize = if (screen.path == Screen.Messages.path) 40.dp else Dimensions.space32
                         NavigationBarItem(
                             modifier = Modifier.testTag(screen.tag),
                             icon = {
                                 if (screen.icon != null && screen.description != null)
                                     RedDotWrapper(isVisible = screen.path == Screen.Messages.path && showMessageDot) {
                                         Image(
-                                            modifier = Modifier.size(iconSize),
+                                            modifier = Modifier.size(Dimensions.space32),
                                             painter = painterResource(id = screen.icon),
                                             contentDescription = stringResource(id = screen.description),
                                             colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onBackground)
                                         )
                                     }
                             },
-                            label = {
-                                screen.label?.let {
-                                    Text(
-                                        text = stringResource(id = it),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onBackground
-                                    )
-                                }
-                            },
+//                            label = {
+//                                screen.label?.let {
+//                                    Text(
+//                                        text = stringResource(id = it),
+//                                        style = MaterialTheme.typography.bodySmall,
+//                                        color = MaterialTheme.colorScheme.onBackground
+//                                    )
+//                                }
+//                            },
                             alwaysShowLabel = true,
                             selected = currentDestination?.hierarchy?.any { it.route == screen.path } == true,
                             onClick = {

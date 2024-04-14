@@ -25,6 +25,8 @@ object  Dimensions {
         get() = 14.dp
     val space18: Dp
         get() = 18.dp
+    val space20: Dp
+        get() = 20.dp
     val space22: Dp
         get() = 22.dp
     val space26: Dp
