@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Ships</string>
+    <string name="s1">Calls screen</string>
+    <string name="s2">Messages screen</string>
+    <string name="s3">Main screen</string>
+    <string name="s4">Account screen</string>
 </resources>
