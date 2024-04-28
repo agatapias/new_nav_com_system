@@ -5,10 +5,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import edu.pwr.navcomsys.ships.screens.main.MainScreen
+import edu.pwr.navcomsys.ships.screens.phone.PhoneScreen
 
 @Composable
 fun NavGraph(
@@ -23,6 +24,10 @@ fun NavGraph(
     ) {
         composable(Screen.Main.path) {
             MainScreen()
+        }
+
+        composable(Screen.Calls.path) {
+            PhoneScreen()
         }
     }
 }

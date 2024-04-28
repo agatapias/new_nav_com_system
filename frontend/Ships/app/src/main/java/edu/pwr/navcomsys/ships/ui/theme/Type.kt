@@ -2,11 +2,9 @@ package edu.pwr.navcomsys.ships.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import edu.pwr.navcomsys.ships.R
 
 private const val DEFAULT_FONT_HEIGHT = 24
 private const val DEFAULT_FONT_LETTER_SPACING = 0.5
@@ -49,7 +47,7 @@ val Typography = Typography(
     // For buttons
     bodyLarge = TextStyle(
         fontFamily = DEFAULT_FONT_FAMILY,
-        fontWeight = FontWeight.Light,
+        fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = DEFAULT_FONT_HEIGHT.sp,
         letterSpacing = DEFAULT_FONT_LETTER_SPACING.sp

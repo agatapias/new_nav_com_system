@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import edu.pwr.navcomsys.ships.extenstion.conditional
@@ -29,6 +30,7 @@ enum class ShipButtonType {
 fun ShipButton(
     modifier: Modifier = Modifier,
     text: String = "",
+    textStyle: TextStyle = MaterialTheme.typography.titleSmall,
     type: ShipButtonType = ShipButtonType.Primary,
     width: Dp? = null,
     isDisabled: Boolean = false,
@@ -70,7 +72,7 @@ fun ShipButton(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.titleSmall,
+            style = textStyle,
             fontWeight = FontWeight.Bold,
             color = textColor,
             maxLines = 1
