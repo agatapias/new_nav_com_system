@@ -8,7 +8,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import edu.pwr.navcomsys.ships.screens.conversation.ConversationScreen
 import edu.pwr.navcomsys.ships.screens.main.MainScreen
+import edu.pwr.navcomsys.ships.screens.message.MessageNavigation
+import edu.pwr.navcomsys.ships.screens.message.MessageScreen
 import edu.pwr.navcomsys.ships.screens.phone.PhoneScreen
 
 @Composable
@@ -28,6 +31,14 @@ fun NavGraph(
 
         composable(Screen.Calls.path) {
             PhoneScreen()
+        }
+
+        composable(Screen.Messages.path) {
+            MessageScreen(MessageNavigation.default(navController))
+        }
+
+        composable(Screen.Conversation.path) {
+            ConversationScreen()
         }
     }
 }

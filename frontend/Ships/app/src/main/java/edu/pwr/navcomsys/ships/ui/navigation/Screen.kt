@@ -38,4 +38,8 @@ sealed class Screen(
         description = R.string.s4,
         tag = "account"
     )
+
+    object Conversation : Screen(
+        path = "conversation",  // TODO: /{id}
+    )
 }
