@@ -66,6 +66,8 @@ dependencies {
     implementation ("org.maplibre.gl:android-plugin-localization-v9:1.0.0")
     implementation ("org.maplibre.gl:android-plugin-annotation-v9:1.0.0")
     implementation ("org.maplibre.gl:android-plugin-markerview-v9:1.0.0")
+    // Lottie
+//    implementation "com.airbnb.android:lottie-compose:6.2.0"
     // Koin
 //    implementation "io.insert-koin:koin-androidx-compose:3.6.0"
 //    implementation "io.insert-koin:koin-android:3.6.0"

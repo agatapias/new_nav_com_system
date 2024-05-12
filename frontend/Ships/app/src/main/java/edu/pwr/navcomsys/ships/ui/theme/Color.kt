@@ -12,3 +12,9 @@ val Pink40 = Color(0xFF7D5260)
 
 val NavyBlue = Color(0xFF0C3482)
 val Teal = Color(0xFF52B9BF)
+
+val DarkBlue = Color(0xFF252741)
+val Dark = Color(0xFF1E1E1E)
+
+val Red = Color(0xFFC61414)
+val Green = Color(0xFF54B427)
