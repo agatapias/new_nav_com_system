@@ -13,6 +13,10 @@ import org.koin.dsl.module
 
 object AppKoin {
 
+    private val environments = module {
+        single { AppRetrofit.create() }
+    }
+
     private val viewModels = module {
         viewModelOf(::MainViewModel)
         viewModelOf(::PhoneViewModel)
@@ -22,6 +26,7 @@ object AppKoin {
 
     private val modules by lazy {
         listOf(
+            environments,
             viewModels,
         )
     }
