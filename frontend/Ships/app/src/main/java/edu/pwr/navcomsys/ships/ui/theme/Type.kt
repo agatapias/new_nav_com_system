@@ -44,6 +44,20 @@ val Typography = Typography(
         lineHeight = DEFAULT_FONT_HEIGHT.sp,
         letterSpacing = DEFAULT_FONT_LETTER_SPACING.sp
     ),
+    headlineMedium = TextStyle(
+        fontFamily = DEFAULT_FONT_FAMILY,
+        fontWeight = FontWeight.Normal,
+        fontSize = 24.sp,
+        lineHeight = DEFAULT_FONT_HEIGHT.sp,
+        letterSpacing = DEFAULT_FONT_LETTER_SPACING.sp
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = DEFAULT_FONT_FAMILY,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp,
+        lineHeight = DEFAULT_FONT_HEIGHT.sp,
+        letterSpacing = DEFAULT_FONT_LETTER_SPACING.sp
+    ),
     // For buttons
     bodyLarge = TextStyle(
         fontFamily = DEFAULT_FONT_FAMILY,
