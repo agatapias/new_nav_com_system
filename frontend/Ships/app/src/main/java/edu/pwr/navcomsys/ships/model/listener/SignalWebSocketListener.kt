@@ -11,7 +11,7 @@ class SignalWebSocketListener(
     client: OkHttpClient
 ) {
     private val request = Request.Builder()
-        .url("ws://${BuildConfig.APP_NETWORK}/projectDeleted")
+        .url("ws://${BuildConfig.APP_NETWORK}/stomp/topic/offer")
         .build()
 
     private val webSocket = client.newWebSocket(request, object : WebSocketListener() {
