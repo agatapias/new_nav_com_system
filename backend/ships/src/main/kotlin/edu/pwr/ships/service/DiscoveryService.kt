@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 
 const val OFFER_PATTERN = "/topic/offer/"
 const val ICE_PATTERN = "/topic/ice/"
-const val ANSWER_PATTERN = "/topic/ice/"
+const val ANSWER_PATTERN = "/topic/answer/"
 
 @Service
 class DiscoveryService(
