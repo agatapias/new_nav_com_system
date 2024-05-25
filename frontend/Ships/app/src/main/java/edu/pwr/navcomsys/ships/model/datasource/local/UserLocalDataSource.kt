@@ -14,5 +14,5 @@ interface UserLocalDataSource {
     suspend fun deleteAll()
 
     @Query("SELECT * FROM user LIMIT 1")
-    suspend fun getUser(): User
+    suspend fun getUser(): User?
 }

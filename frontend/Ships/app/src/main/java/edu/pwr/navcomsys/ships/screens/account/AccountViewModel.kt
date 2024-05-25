@@ -20,7 +20,7 @@ class AccountViewModel(
     init {
         viewModelScope.launch {
             val user = userRepository.getUser()
-            Log.d("user", user.username)
+            Log.d("user", "${user?.username}")
             _uiState.update {
                 it.copy(user = user)
             }

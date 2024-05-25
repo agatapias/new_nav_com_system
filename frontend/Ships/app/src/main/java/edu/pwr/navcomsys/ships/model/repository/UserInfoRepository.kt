@@ -1,5 +1,6 @@
 package edu.pwr.navcomsys.ships.model.repository
 
+import android.util.Log
 import edu.pwr.navcomsys.ships.data.database.User
 import edu.pwr.navcomsys.ships.data.dto.UserInfoDto
 import edu.pwr.navcomsys.ships.data.enums.ResponseCode
@@ -15,14 +16,17 @@ class UserInfoRepository(
         userLocalDataSource.insert(user)
     }
 
-    suspend fun getUser(): User {
+    suspend fun getUser(): User? {
         return userLocalDataSource.getUser()
     }
 
     suspend fun updateUserInfo(userInfoDto: UserInfoDto) : ResponseCode {
+        Log.d("UserInfoRepo", "updateUserInfo called")
         val result = userInfoRemoteDataSource.updateUserInfo(userInfoDto)
+        val code = result.code()
+        Log.d("UserInfoRepo", "result: $code")
 
-        return when(result.code()) {
+        return when(code) {
             200 -> ResponseCode.SUCCESS
             409 -> ResponseCode.CONFLICT
             else -> ResponseCode.FAILURE

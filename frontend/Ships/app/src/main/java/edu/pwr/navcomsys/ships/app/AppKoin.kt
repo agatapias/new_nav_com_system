@@ -1,6 +1,7 @@
 package edu.pwr.navcomsys.ships.app
 
 import android.content.Context
+import com.google.android.gms.location.LocationServices
 import edu.pwr.navcomsys.ships.model.datasource.remote.SignalRemoteDataSource
 import edu.pwr.navcomsys.ships.model.datasource.remote.UserInfoRemoteDataSource
 import edu.pwr.navcomsys.ships.model.datasource.remote.impl.SignalRemoteDataSourceImpl
@@ -32,6 +33,7 @@ object AppKoin {
         singleOf(::UserInfoRemoteDataSourceImpl) bind UserInfoRemoteDataSource::class
         singleOf(::SignalRemoteDataSourceImpl) bind SignalRemoteDataSource::class
         single { get<AppDatabase>().userLocalDataSource() }
+        single { LocationServices.getFusedLocationProviderClient(androidApplication()) }
     }
 
     private val repositories = module {
