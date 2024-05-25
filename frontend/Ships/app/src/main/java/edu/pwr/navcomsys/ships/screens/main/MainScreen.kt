@@ -1,6 +1,12 @@
 package edu.pwr.navcomsys.ships.screens.main
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.util.Log
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,18 +21,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import com.mapbox.mapboxsdk.annotations.Icon
+import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.Style
 import edu.pwr.navcomsys.ships.R
 import edu.pwr.navcomsys.ships.ui.component.Loader
-import edu.pwr.navcomsys.ships.ui.component.LoaderWrapper
 import edu.pwr.navcomsys.ships.ui.theme.Dimensions
 import org.koin.androidx.compose.koinViewModel
+
 
 @Composable
 fun MainScreen() {
@@ -44,6 +55,7 @@ private fun MainScreenContent(
     uiState: MainUiState,
     uiInteraction: MainUiInteraction
 ) {
+    val context = LocalContext.current
     if (uiState.isLoading) {
         Loader(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
     }
@@ -71,6 +83,7 @@ private fun MainScreenContent(
                             MarkerOptions()
                                 .position(LatLng(12.33, 14.88))
                                 .setTitle("Yes")
+                                .setIcon(drawableToIcon(context, R.drawable.ic_my_boat))
 //                                .setSnippet(markerSnippet)
                         )
                         mapboxMap.setOnMarkerClickListener { marker ->
@@ -93,6 +106,22 @@ private fun MainScreenContent(
     }
 }
 
+fun drawableToIcon(context: Context, @DrawableRes id: Int, @SuppressLint("ResourceAsColor") @ColorInt colorRes: Int = R.color.white): Icon? {
+    val vectorDrawable = ResourcesCompat.getDrawable(context.resources, id, context.theme)
+    val bitmap = Bitmap.createBitmap(
+        55,
+        120,
+//        vectorDrawable!!.intrinsicWidth,
+//        vectorDrawable.intrinsicHeight,
+        Bitmap.Config.ARGB_8888
+    )
+    val canvas = Canvas(bitmap)
+    vectorDrawable!!.setBounds(0, 0, canvas.width, canvas.height)
+    DrawableCompat.setTint(vectorDrawable, colorRes)
+    vectorDrawable.draw(canvas)
+    return IconFactory.getInstance(context).fromBitmap(bitmap)
+}
+
 @Composable
 fun ShipsListFloatingButton(
     modifier: Modifier = Modifier,
@@ -108,7 +137,7 @@ fun ShipsListFloatingButton(
         ) {
             Image(
                 modifier = Modifier.size(Dimensions.space30),
-                painter = painterResource(id = R.drawable.ic_list),
+                painter = painterResource(id = edu.pwr.navcomsys.ships.R.drawable.ic_list),
                 colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.surface),
                 contentDescription = "Action button for list of ships."
             )
