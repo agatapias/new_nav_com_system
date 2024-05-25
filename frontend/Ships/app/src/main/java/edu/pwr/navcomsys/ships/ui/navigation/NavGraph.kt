@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import edu.pwr.navcomsys.ships.screens.account.AccountScreen
 import edu.pwr.navcomsys.ships.screens.conversation.ConversationScreen
 import edu.pwr.navcomsys.ships.screens.main.MainScreen
 import edu.pwr.navcomsys.ships.screens.message.MessageNavigation
@@ -39,6 +40,10 @@ fun NavGraph(
 
         composable(Screen.Conversation.path) {
             ConversationScreen()
+        }
+
+        composable(Screen.Account.path) {
+            AccountScreen()
         }
     }
 }

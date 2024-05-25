@@ -7,10 +7,12 @@ import edu.pwr.navcomsys.ships.model.datasource.remote.impl.SignalRemoteDataSour
 import edu.pwr.navcomsys.ships.model.datasource.remote.impl.UserInfoRemoteDataSourceImpl
 import edu.pwr.navcomsys.ships.model.repository.SignalRepository
 import edu.pwr.navcomsys.ships.model.repository.UserInfoRepository
+import edu.pwr.navcomsys.ships.screens.account.AccountViewModel
 import edu.pwr.navcomsys.ships.screens.conversation.ConversationViewModel
 import edu.pwr.navcomsys.ships.screens.main.MainViewModel
 import edu.pwr.navcomsys.ships.screens.message.MessageViewModel
 import edu.pwr.navcomsys.ships.screens.phone.PhoneViewModel
+import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -23,15 +25,17 @@ object AppKoin {
 
     private val environments = module {
         single { AppRetrofit.create() }
+        single { AppDatabase.create(androidApplication()) }
     }
 
     private val dataSources = module {
         singleOf(::UserInfoRemoteDataSourceImpl) bind UserInfoRemoteDataSource::class
         singleOf(::SignalRemoteDataSourceImpl) bind SignalRemoteDataSource::class
+        single { get<AppDatabase>().userLocalDataSource() }
     }
 
     private val repositories = module {
-        single { UserInfoRepository(get()) }
+        single { UserInfoRepository(get(), get()) }
         single { SignalRepository(get()) }
     }
 
@@ -40,6 +44,7 @@ object AppKoin {
         viewModelOf(::PhoneViewModel)
         viewModelOf(::MessageViewModel)
         viewModelOf(::ConversationViewModel)
+        viewModelOf(::AccountViewModel)
     }
 
     private val modules by lazy {
