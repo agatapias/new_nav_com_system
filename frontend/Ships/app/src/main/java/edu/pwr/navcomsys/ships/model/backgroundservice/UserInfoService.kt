@@ -1,7 +1,6 @@
 package edu.pwr.navcomsys.ships.model.backgroundservice
 
 import android.Manifest
-import android.app.Application
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -22,7 +21,6 @@ import kotlin.concurrent.timerTask
 class UserInfoService : Service() {
     private val locationManager: FusedLocationProviderClient by inject()
     private val userInfoRepository: UserInfoRepository by inject()
-    private val context: Application by inject()
 
     private var lastLocation: Location? = null
 
@@ -36,14 +34,7 @@ class UserInfoService : Service() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-//            return
+            // whatever
         } else {
             locationManager.lastLocation
                 .addOnSuccessListener { location: Location? ->
