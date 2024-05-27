@@ -78,7 +78,9 @@ class UserInfoService : Service() {
                             longitude = location.longitude,
                             latitude = location.latitude
                         )
-                        userInfoRepository.updateUserInfo(userInfo)
+                        kotlin.runCatching {
+                            userInfoRepository.updateUserInfo(userInfo)
+                        }
                     }
                 }
             }

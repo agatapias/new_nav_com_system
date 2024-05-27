@@ -1,8 +1,15 @@
 package edu.pwr.navcomsys.ships
 
+import WiFiDirectBroadcastReceiver
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.wifi.p2p.WifiP2pDeviceList
+import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,18 +23,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import edu.pwr.navcomsys.ships.model.backgroundservice.UserInfoService
 import edu.pwr.navcomsys.ships.ui.navigation.BottomNavigationBar
 import edu.pwr.navcomsys.ships.ui.theme.ShipsTheme
 
-class MainActivity : ComponentActivity() {
+
+class MainActivity : ComponentActivity(), WifiP2pManager.PeerListListener {
     private var hasNewMessage: MutableState<Boolean> = mutableStateOf(false)
 
+    private val intentFilter = IntentFilter()
+    private lateinit var channel: WifiP2pManager.Channel
+    private lateinit var manager: WifiP2pManager
+    private lateinit var receiver: BroadcastReceiver
+
     companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+        const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,18 +55,47 @@ class MainActivity : ComponentActivity() {
         }
 
         // Check if location permissions are granted
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Request location permissions
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-        } else {
-            // Start the service if permissions are already granted
-            startLocationService()
-        }
+//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // Request location permissions
+//            ActivityCompat.requestPermissions(
+//                this,
+//                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION),
+//                LOCATION_PERMISSION_REQUEST_CODE
+//            )
+//        } else {
+//            // Start the service if permissions are already granted
+//            startLocationService()
+//        }
+
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
+
+        manager = getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
+        channel = manager.initialize(this, mainLooper, null)
+
+        receiver = WiFiDirectBroadcastReceiver(manager, channel, this)
+
+        registerReceiver(receiver, intentFilter)
+
+//        val activity = this
+//        CoroutineScope(Dispatchers.Default).launch {
+//            discoverPeers(manager, channel, activity)
+//        }
     }
+
+    override fun onResume() {
+        super.onResume()
+        registerReceiver(receiver, intentFilter)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver(receiver)
+    }
+
+    // delete below
 
     private fun startLocationService() {
         val intent = Intent(this, UserInfoService::class.java)
@@ -79,6 +119,20 @@ class MainActivity : ComponentActivity() {
     private fun showPermissionDeniedMessage() {
         // Show a message to the user explaining why the permission is necessary
         Toast.makeText(this, "Location permission is required to use this feature", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onPeersAvailable(wifiP2pDeviceList: WifiP2pDeviceList?) {
+        Log.d("WifiDirect", "onPeersAvailable called")
+        if (!wifiP2pDeviceList?.deviceList.isNullOrEmpty()) {
+            val deviceList = wifiP2pDeviceList?.deviceList?.toList()
+            Log.d("WifiDirect", "device list:")
+            deviceList?.forEach {
+                Log.d("WifiDirect", it.deviceName)
+            }
+//            for (device in deviceList) {
+//                deviceNames.add(device.deviceName)
+//            }
+        }
     }
 }
 
