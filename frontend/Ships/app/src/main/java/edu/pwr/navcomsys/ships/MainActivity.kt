@@ -82,9 +82,10 @@ class MainActivity : ComponentActivity(){
             startLocationService()
             receiver = WiFiDirectBroadcastReceiver(manager, channel, this)
 
+            val context = this
             registerReceiver(receiver, intentFilter)
             CoroutineScope(Dispatchers.Default).launch {
-                MessageServerAsyncTask().execute()
+                MessageServerAsyncTask(context).execute()
             }
         }
     }
@@ -107,7 +108,11 @@ class MainActivity : ComponentActivity(){
 
     override fun onStop() {
         super.onStop()
-        manager.removeGroup(channel, null)
+        try {
+            manager.removeGroup(channel, null)
+        } catch (e: Exception) {
+            Log.e("Main", "exception when closing app", e)
+        }
     }
     // delete below
 

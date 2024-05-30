@@ -218,7 +218,7 @@ class WiFiDirectBroadcastReceiver(
             val outputStream = socket.getOutputStream()
             outputStream.write(buf, 0, buf.size)
             Log.d(TAG, "broadcast receiver")
-            Log.d(TAG, buf.toString())
+            Log.d(TAG, buf.decodeToString())
             outputStream.close()
         } catch (e: Exception) {
             Log.e(TAG, "sendMessage error", e)

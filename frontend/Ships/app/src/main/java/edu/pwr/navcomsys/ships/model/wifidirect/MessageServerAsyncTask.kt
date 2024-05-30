@@ -1,13 +1,17 @@
 package edu.pwr.navcomsys.ships.model.wifidirect
 
+import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
+import android.widget.Toast
 import java.io.File
 import java.net.ServerSocket
 
 private const val TAG = "WifiDirect"
 
-class MessageServerAsyncTask() : AsyncTask<Void, Void, String?>() {
+class MessageServerAsyncTask(
+    private val context: Context
+) : AsyncTask<Void, Void, String?>() {
 
     override fun doInBackground(vararg params: Void): String? {
         Log.d(TAG, "doInBackground called")
@@ -32,9 +36,9 @@ class MessageServerAsyncTask() : AsyncTask<Void, Void, String?>() {
             val bytearr = ByteArray(4096)
             inputstream.read(bytearr)
             Log.d(TAG, "async task")
-            Log.d(TAG, bytearr.toString())
+            Log.d(TAG, bytearr.decodeToString())
             serverSocket.close()
-            null
+            bytearr.decodeToString()
         }
     }
 
@@ -46,11 +50,7 @@ class MessageServerAsyncTask() : AsyncTask<Void, Void, String?>() {
     override fun onPostExecute(result: String?) {
         result?.run {
             Log.d(TAG, "onPostExecute called")
-//            statusText.text = "File copied - $result"
-//            val intent = Intent(Intent.ACTION_VIEW).apply {
-//                setDataAndType(Uri.parse("file://$result"), "image/*")
-//            }
-//            context.startActivity(intent)
+            Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
         }
     }
 }
