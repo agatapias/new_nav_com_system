@@ -6,6 +6,7 @@ import edu.pwr.navcomsys.ships.model.datasource.remote.SignalRemoteDataSource
 import edu.pwr.navcomsys.ships.model.datasource.remote.UserInfoRemoteDataSource
 import edu.pwr.navcomsys.ships.model.datasource.remote.impl.SignalRemoteDataSourceImpl
 import edu.pwr.navcomsys.ships.model.datasource.remote.impl.UserInfoRemoteDataSourceImpl
+import edu.pwr.navcomsys.ships.model.repository.PeerRepository
 import edu.pwr.navcomsys.ships.model.repository.SignalRepository
 import edu.pwr.navcomsys.ships.model.repository.UserInfoRepository
 import edu.pwr.navcomsys.ships.screens.account.AccountViewModel
@@ -37,6 +38,7 @@ object AppKoin {
     }
 
     private val repositories = module {
+        single { PeerRepository() }
         single { UserInfoRepository(get(), get()) }
         single { SignalRepository(get()) }
     }

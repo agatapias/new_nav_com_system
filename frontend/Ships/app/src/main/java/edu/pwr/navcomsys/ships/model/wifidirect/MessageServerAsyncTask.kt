@@ -26,6 +26,7 @@ class MessageServerAsyncTask(
              * connection is accepted from a client.
              */
             val client = serverSocket.accept()
+
             Log.d(TAG, "client accepted, ${client.inetAddress.hostAddress}")
             /**
              * If this code is reached, a client has connected and transferred data

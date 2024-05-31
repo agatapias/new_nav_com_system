@@ -27,17 +27,20 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import edu.pwr.navcomsys.ships.model.backgroundservice.UserInfoService
+import edu.pwr.navcomsys.ships.model.repository.PeerRepository
+import edu.pwr.navcomsys.ships.model.wifidirect.MessageListener
 import edu.pwr.navcomsys.ships.model.wifidirect.MessageServerAsyncTask
 import edu.pwr.navcomsys.ships.ui.navigation.BottomNavigationBar
 import edu.pwr.navcomsys.ships.ui.theme.ShipsTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 
 class MainActivity : ComponentActivity(){
     private var hasNewMessage: MutableState<Boolean> = mutableStateOf(false)
-
+    private val peerRepository: PeerRepository by inject()
     private lateinit var channel: WifiP2pManager.Channel
     private lateinit var manager: WifiP2pManager
     private lateinit var receiver: BroadcastReceiver
@@ -47,6 +50,8 @@ class MainActivity : ComponentActivity(){
         addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
         addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
     }
+
+
 
     companion object {
         const val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -80,13 +85,11 @@ class MainActivity : ComponentActivity(){
         } else {
             // Start the service if permissions are already granted
             startLocationService()
-            receiver = WiFiDirectBroadcastReceiver(manager, channel, this)
+            receiver = WiFiDirectBroadcastReceiver(manager, channel, this, peerRepository)
 
-            val context = this
             registerReceiver(receiver, intentFilter)
-            CoroutineScope(Dispatchers.Default).launch {
-                MessageServerAsyncTask(context).execute()
-            }
+            val messageListener = MessageListener(peerRepository)
+            messageListener.startListening()
         }
     }
 

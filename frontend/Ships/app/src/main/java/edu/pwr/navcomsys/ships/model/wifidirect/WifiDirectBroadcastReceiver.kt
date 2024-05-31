@@ -15,6 +15,7 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import edu.pwr.navcomsys.ships.MainActivity.Companion.LOCATION_PERMISSION_REQUEST_CODE
+import edu.pwr.navcomsys.ships.model.repository.PeerRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,10 +30,12 @@ private const val TAG = "WifiDirect"
 class WiFiDirectBroadcastReceiver(
     private val manager: WifiP2pManager,
     private val channel: WifiP2pManager.Channel,
-    private val activity: Activity
+    private val activity: Activity,
+    private val peerRepository: PeerRepository
 ) : BroadcastReceiver() {
     private var lastState: Int? = null
     private var connected: MutableList<String> = mutableListOf()
+    private val name: String = android.os.Build.MODEL
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.d(TAG, "WiFiDirectBroadcastReceiver called")
@@ -142,10 +145,13 @@ class WiFiDirectBroadcastReceiver(
                 }
                 requestGroupInfo()
 
-                if (!info.isGroupOwner) {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        info.groupOwnerAddress.hostAddress?.let { sendMessage(it) }
+                if (info.isGroupOwner) {
+                    val newConnectedDevices = peerRepository.connectedDevices.filter {
+                        it.macAddress in connected
                     }
+                    peerRepository.connectedDevices = newConnectedDevices
+                } else {
+                    info.groupOwnerAddress.hostAddress?.let { peerRepository.sendIPInfo(it) }
                 }
             })
         } else {
@@ -173,15 +179,17 @@ class WiFiDirectBroadcastReceiver(
 
                 if (group != null) {
                     val users = group.clientList + group.owner
+                    Log.d(TAG, group.clientList.toString())
                     Log.d(TAG, "Group info available")
+                    Log.d(TAG, "Self device name: $name")
                     for (device in users) {
+                        if (device.deviceName == name) {
+                            peerRepository.macAddress = device.deviceAddress
+                        }
                         Log.d(
                             TAG,
                             "Connected device in group: ${device.deviceName} - ${device.deviceAddress}"
                         )
-                        val mac = getMac(activity)
-                        Log.d(TAG, "my mac: $mac")
-                        Log.d(TAG, "device address: ${device.deviceAddress}")
                     }
                     connected.clear()
                     connected.addAll(users.map { it.deviceName })
@@ -213,7 +221,7 @@ class WiFiDirectBroadcastReceiver(
              * port, and timeout information.
              */
             socket.bind(null)
-            socket.connect((InetSocketAddress(host, port)), 500)
+            socket.connect((InetSocketAddress(host, port)), 10000)
 
             val outputStream = socket.getOutputStream()
             outputStream.write(buf, 0, buf.size)
