@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.NetworkInfo
-import android.net.wifi.WifiManager
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pDeviceList
@@ -19,8 +18,6 @@ import edu.pwr.navcomsys.ships.model.repository.PeerRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.net.InetSocketAddress
-import java.net.Socket
 
 private const val TAG = "WifiDirect"
 
@@ -45,6 +42,7 @@ class WiFiDirectBroadcastReceiver(
             WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION -> {
                 // Check to see if Wi-Fi is enabled and notify appropriate activity
                 val state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1)
+
                 if (lastState == state) return
                 lastState = state
                 when (state) {
@@ -75,10 +73,6 @@ class WiFiDirectBroadcastReceiver(
                 // Respond to this device's wifi state changing
             }
         }
-    }
-
-    fun clearConnectedList() {
-        connected.clear()
     }
 
     private fun requestPeers() {
@@ -132,6 +126,9 @@ class WiFiDirectBroadcastReceiver(
     private fun handleConnectionChanged(intent: Intent) {
         Log.d(TAG, "handleConnectionChanged called")
         val networkInfo = intent.getParcelableExtra<NetworkInfo>(WifiP2pManager.EXTRA_NETWORK_INFO)
+        val device: WifiP2pDevice? = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE)
+        peerRepository.deviceName = device?.deviceName
+
         if (networkInfo != null && networkInfo.isConnected) {
             // We are connected, request connection info to find out which device connected
             manager.requestConnectionInfo(channel, WifiP2pManager.ConnectionInfoListener { info ->
@@ -147,7 +144,7 @@ class WiFiDirectBroadcastReceiver(
 
                 if (info.isGroupOwner) {
                     val newConnectedDevices = peerRepository.connectedDevices.filter {
-                        it.macAddress in connected
+                        it.deviceName in connected
                     }
                     peerRepository.connectedDevices = newConnectedDevices
                 } else {
@@ -182,15 +179,6 @@ class WiFiDirectBroadcastReceiver(
                     Log.d(TAG, group.clientList.toString())
                     Log.d(TAG, "Group info available")
                     Log.d(TAG, "Self device name: $name")
-                    for (device in users) {
-                        if (device.deviceName == name) {
-                            peerRepository.macAddress = device.deviceAddress
-                        }
-                        Log.d(
-                            TAG,
-                            "Connected device in group: ${device.deviceName} - ${device.deviceAddress}"
-                        )
-                    }
                     connected.clear()
                     connected.addAll(users.map { it.deviceName })
                 }
@@ -204,43 +192,6 @@ class WiFiDirectBroadcastReceiver(
         discoverPeers(manager, channel, activity)
     }
 
-    private fun getMac(context: Context): String {
-        val manager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        val info = manager.connectionInfo
-        return info.macAddress.toUpperCase()
-    }
-
-    private fun sendMessage(host: String) {
-        Log.d(TAG, "sendMessage called")
-        val port = 8888
-        val socket = Socket()
-        val buf = "Hello phone".toByteArray()
-        try {
-            /**
-             * Create a client socket with the host,
-             * port, and timeout information.
-             */
-            socket.bind(null)
-            socket.connect((InetSocketAddress(host, port)), 10000)
-
-            val outputStream = socket.getOutputStream()
-            outputStream.write(buf, 0, buf.size)
-            Log.d(TAG, "broadcast receiver")
-            Log.d(TAG, buf.decodeToString())
-            outputStream.close()
-        } catch (e: Exception) {
-            Log.e(TAG, "sendMessage error", e)
-            Log.d(TAG, "${e.message} this is error")
-        } finally {
-            /**
-             * Clean up any open sockets when done
-             * transferring or if an exception occurred.
-             */
-            socket.takeIf { it.isConnected }?.apply {
-                close()
-            }
-        }
-    }
 
     companion object {
         fun discoverPeers(

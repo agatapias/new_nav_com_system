@@ -19,7 +19,6 @@ import java.net.InetSocketAddress
 import java.net.NetworkInterface
 import java.net.Socket
 import java.net.SocketException
-import java.util.Collections
 
 
 private const val TAG = "PeerRepository"
@@ -29,7 +28,7 @@ class PeerRepository {
     val locationFlow: MutableStateFlow<List<LocationDto>> = MutableStateFlow(emptyList())
     private val scope = CoroutineScope(Dispatchers.IO)
     private val gson = Gson()
-    var macAddress: String? = null
+    var deviceName: String? = null
 
     fun sendMessage(host: String, msg: String) {
         scope.launch {
@@ -63,13 +62,13 @@ class PeerRepository {
     }
 
     fun sendIPInfo(ownerHost: String) {
-        val macAddress = this.macAddress
+        val deviceName = this.deviceName
         val ip = getIpAddress()
 
-        Log.d(TAG, "MAC address to send: $macAddress")
+        Log.d(TAG, "deviceName to send: $deviceName")
         Log.d(TAG, "IP address to send: $ip")
 
-        val ipInfoDto = IPInfoDto(macAddress ?: "", ip)
+        val ipInfoDto = IPInfoDto(deviceName ?: "", ip)
         val json = convertToJson(ipInfoDto, MessageType.IP_INFO)
         sendMessage(ownerHost, json)
     }
@@ -77,9 +76,9 @@ class PeerRepository {
     fun broadcastAddresses() {
         val broadcastDto = IPBroadcastDto(connectedDevices)
         val json = convertToJson(broadcastDto, MessageType.IP_BROADCAST)
-        val macAddress = this.macAddress
+        val deviceName = this.deviceName
         for (device in connectedDevices) {
-            if (device.macAddress != macAddress) {
+            if (device.deviceName != deviceName) {
                 sendMessage(device.ipAddress, json)
             }
         }
@@ -142,8 +141,8 @@ class PeerRepository {
     }
 
     fun getOwnIpInfo(): IPInfoDto {
-        val macAddress = this.macAddress
+        val deviceName = this.deviceName
         val ipAddr = getIpAddress()
-        return IPInfoDto(macAddress ?: "", ipAddr)
+        return IPInfoDto(deviceName ?: "", ipAddr)
     }
 }

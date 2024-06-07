@@ -71,7 +71,7 @@ class MessageListener(
 
     private fun handleIPInfoMessage(msg: String) {
         val ipInfo = gson.fromJson(msg, IPInfoDto::class.java)
-        if (peerRepository.connectedDevices.none { it.macAddress == ipInfo.macAddress && it.ipAddress == ipInfo.ipAddress }) {
+        if (peerRepository.connectedDevices.none { it.deviceName == ipInfo.deviceName && it.ipAddress == ipInfo.ipAddress }) {
             var newDevicesList = peerRepository.connectedDevices + ipInfo
             if (peerRepository.connectedDevices.isEmpty()) {
                 val ownerIpInfo = peerRepository.getOwnIpInfo()
