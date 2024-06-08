@@ -5,7 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import edu.pwr.navcomsys.ships.BuildConfig
+import edu.pwr.navcomsys.ships.data.database.ChatMessage
 import edu.pwr.navcomsys.ships.data.database.User
+import edu.pwr.navcomsys.ships.model.datasource.local.ChatMessageDataSource
 import edu.pwr.navcomsys.ships.model.datasource.local.UserLocalDataSource
 
 @Database(
@@ -16,6 +18,7 @@ import edu.pwr.navcomsys.ships.model.datasource.local.UserLocalDataSource
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userLocalDataSource(): UserLocalDataSource
+    abstract fun chatMessageLocalDataSource(): ChatMessageDataSource
 
     companion object {
         fun create(context: Context): AppDatabase {
