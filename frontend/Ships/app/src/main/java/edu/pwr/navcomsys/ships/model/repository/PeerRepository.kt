@@ -137,6 +137,7 @@ class PeerRepository(
     fun broadcastAddresses() {
         val broadcastDto = IPBroadcastDto(connectedDevices)
         val json = convertToJson(broadcastDto, MessageType.IP_BROADCAST)
+        Log.d(TAG, "To broadcast = $json")
         val deviceName = this.deviceName
         for (device in connectedDevices) {
             if (device.deviceName != deviceName) {

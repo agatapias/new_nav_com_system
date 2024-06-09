@@ -8,11 +8,13 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.wifi.p2p.WifiP2pManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -60,6 +62,7 @@ class MainActivity : ComponentActivity(){
         const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -89,11 +92,15 @@ class MainActivity : ComponentActivity(){
             // Start the service if permissions are already granted
             startLocationService()
             receiver = WiFiDirectBroadcastReceiver(manager, channel, this, peerRepository)
-
+            manager.requestDeviceInfo(channel) {
+                Log.d("WifiDirect", "Device name = ${it?.deviceName}")
+                peerRepository.deviceName = it?.deviceName
+            }
             registerReceiver(receiver, intentFilter)
             messageListener.startListening()
         }
     }
+
 
     override fun onResume() {
         Log.d("Main", "onResume called")

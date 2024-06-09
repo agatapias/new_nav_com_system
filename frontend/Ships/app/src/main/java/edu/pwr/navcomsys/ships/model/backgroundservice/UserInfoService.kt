@@ -80,7 +80,7 @@ class UserInfoService : Service() {
                     )
 
                     for (device in peerRepository.connectedDevices) {
-                        if (user != null && location != null) {
+                        if (user != null && location != null && device.deviceName != peerRepository.deviceName) {
                             val locationDto = LocationDto(
                                 username = user.username,
                                 shipName = user.shipName,

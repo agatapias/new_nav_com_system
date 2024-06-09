@@ -97,6 +97,7 @@ class MessageListener(
     }
 
     private fun handleIPBroadcastMessage(msg: String) {
+        Log.d(TAG, "IP broadcasted = $msg")
         val broadcast = gson.fromJson(msg, IPBroadcastDto::class.java)
         peerRepository.updateDevices(broadcast.devices)
     }
