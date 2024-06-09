@@ -13,8 +13,8 @@ interface ChatMessageDataSource {
     @Query("SELECT * FROM chat_message ORDER BY createdDate, createdTime DESC")
     suspend fun getMessages(): List<ChatMessage>
 
-    @Query("SELECT * FROM chat_message WHERE fromUsername = :from AND toUsername = :to ORDER BY createdDate, createdTime DESC")
-    suspend fun getMessagesFromUser(from: String, to: String): List<ChatMessage>
+    @Query("SELECT * FROM chat_message WHERE fromUsername = :username OR toUsername = :username ORDER BY createdDate, createdTime DESC")
+    suspend fun getMessagesFromUser(username: String): List<ChatMessage>
 
     @Query(
         "SELECT DISTINCT toUsername FROM chat_message WHERE fromUsername = :username " +

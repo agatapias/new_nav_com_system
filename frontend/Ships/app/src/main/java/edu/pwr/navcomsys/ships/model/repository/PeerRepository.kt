@@ -49,7 +49,7 @@ class PeerRepository(
     private val hostTimerMap: MutableMap<String, Timer> = mutableMapOf()
 
     init {
-        mockLocations()
+//        mockLocations()
         // Listen to location changes
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -307,6 +307,6 @@ class PeerRepository(
     }
 
     fun getHostByUsername(username: String) : String? {
-        return locationFlow.value.filter { it.username == username }.first().ipAddress
+        return locationFlow.value.filter { it.username == username }.firstOrNull()?.ipAddress
     }
 }

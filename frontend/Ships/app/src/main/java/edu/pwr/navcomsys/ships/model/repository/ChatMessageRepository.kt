@@ -13,9 +13,7 @@ class ChatMessageRepository(
     }
 
     suspend fun getConversationWith(username: String): List<ChatMessage> {
-        val user = userLocalDataSource.getUser()
-
-        return user?.username?.let { chatMessageDataSource.getMessagesFromUser(username, it) } ?: emptyList()
+        return chatMessageDataSource.getMessagesFromUser(username)
     }
 
     suspend fun getConversationUsers() : List<String> {

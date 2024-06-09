@@ -7,10 +7,14 @@ import edu.pwr.navcomsys.ships.R
 import edu.pwr.navcomsys.ships.model.repository.ChatMessageRepository
 import edu.pwr.navcomsys.ships.model.repository.UserInfoRepository
 import edu.pwr.navcomsys.ships.model.wifidirect.MessageListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.subscribe
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -27,14 +31,17 @@ class MessageViewModel(
     init {
         Log.d(TAG, "1")
         viewModelScope.launch {
-            Log.d(TAG, "2")
-            messageListener.chatMessages
-                .filter { it != null }
-                .collect{
-                    val buffer = _uiState.value.messageBuffer
-                    val newBuffer = buffer + it!!
-                    _uiState.update { state -> state.copy(messageBuffer = newBuffer) }
-                }
+            CoroutineScope(Dispatchers.IO).launch {
+                Log.d(TAG, "2")
+                messageListener.chatMessages
+                    .filter { it != null }
+                    .collect {
+                        val buffer = _uiState.value.messageBuffer
+                        val newBuffer = listOf(it!!) + buffer
+                        _uiState.update { state -> state.copy(messageBuffer = newBuffer) }
+                    }
+                Log.d(TAG, "2.5")
+            }
             Log.d(TAG, "3")
             val user = userInfoRepository.getUser()
             Log.d(TAG, "4")
