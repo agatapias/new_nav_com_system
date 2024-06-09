@@ -156,6 +156,15 @@ class PeerRepository(
         hostTimerMap[ownerHost] = timer
     }
 
+    fun stopHostTimer() {
+        val connectedDevicesIps = connectedDevices.map { it.ipAddress }
+        val toStop = hostTimerMap.keys.filter { it !in connectedDevicesIps }
+        toStop.forEach { key ->
+            hostTimerMap[key]?.cancel()
+            hostTimerMap.remove(key)
+        }
+    }
+
     fun broadcastAddresses() {
         val broadcastDto = IPBroadcastDto(connectedDevices)
         val json = convertToJson(broadcastDto, MessageType.IP_BROADCAST)
