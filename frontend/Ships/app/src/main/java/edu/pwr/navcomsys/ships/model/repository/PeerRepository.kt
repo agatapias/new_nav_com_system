@@ -49,7 +49,7 @@ class PeerRepository(
     private val hostTimerMap: MutableMap<String, Timer> = mutableMapOf()
 
     init {
-        mockLocations()
+//        mockLocations()
         // Listen to location changes
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -291,7 +291,7 @@ class PeerRepository(
         return getLocalIPAddress()?.let { getDottedDecimalIP(it) } ?: "UNKNOWN"
     }
 
-    private fun convertToJson(obj: Any, type: MessageType) : String {
+    fun convertToJson(obj: Any, type: MessageType) : String {
         val nestedJson = gson.toJson(obj)
         val messageWrapper = MessageDto(type, nestedJson)
         return gson.toJson(messageWrapper)
@@ -304,5 +304,9 @@ class PeerRepository(
             hostTimerMap[key]?.cancel()
             hostTimerMap.remove(key)
         }
+    }
+
+    fun getHostByUsername(username: String) : String? {
+        return locationFlow.value.filter { it.username == username }.firstOrNull()?.ipAddress
     }
 }

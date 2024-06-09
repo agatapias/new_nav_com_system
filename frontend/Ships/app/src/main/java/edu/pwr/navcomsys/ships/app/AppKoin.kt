@@ -10,6 +10,7 @@ import edu.pwr.navcomsys.ships.model.repository.ChatMessageRepository
 import edu.pwr.navcomsys.ships.model.repository.PeerRepository
 import edu.pwr.navcomsys.ships.model.repository.SignalRepository
 import edu.pwr.navcomsys.ships.model.repository.UserInfoRepository
+import edu.pwr.navcomsys.ships.model.wifidirect.MessageListener
 import edu.pwr.navcomsys.ships.screens.account.AccountViewModel
 import edu.pwr.navcomsys.ships.screens.conversation.ConversationViewModel
 import edu.pwr.navcomsys.ships.screens.main.MainViewModel
@@ -30,6 +31,7 @@ object AppKoin {
     private val environments = module {
         single { AppRetrofit.create() }
         single { AppDatabase.create(androidApplication()) }
+        single { MessageListener(get(), get()) }
     }
 
     private val dataSources = module {

@@ -27,9 +27,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import edu.pwr.navcomsys.ships.model.backgroundservice.UserInfoService
+import edu.pwr.navcomsys.ships.model.repository.ChatMessageRepository
 import edu.pwr.navcomsys.ships.model.repository.PeerRepository
 import edu.pwr.navcomsys.ships.model.wifidirect.MessageListener
-import edu.pwr.navcomsys.ships.model.wifidirect.MessageServerAsyncTask
 import edu.pwr.navcomsys.ships.ui.navigation.BottomNavigationBar
 import edu.pwr.navcomsys.ships.ui.theme.ShipsTheme
 import kotlinx.coroutines.CoroutineScope
@@ -41,6 +41,8 @@ import org.koin.android.ext.android.inject
 class MainActivity : ComponentActivity(){
     private var hasNewMessage: MutableState<Boolean> = mutableStateOf(false)
     private val peerRepository: PeerRepository by inject()
+    private val chatMessageRepository: ChatMessageRepository by inject()
+    private val messageListener: MessageListener by inject()
     private lateinit var channel: WifiP2pManager.Channel
     private lateinit var manager: WifiP2pManager
     private lateinit var receiver: BroadcastReceiver
@@ -88,7 +90,6 @@ class MainActivity : ComponentActivity(){
             receiver = WiFiDirectBroadcastReceiver(manager, channel, this, peerRepository)
 
             registerReceiver(receiver, intentFilter)
-            val messageListener = MessageListener(peerRepository)
             messageListener.startListening()
         }
     }

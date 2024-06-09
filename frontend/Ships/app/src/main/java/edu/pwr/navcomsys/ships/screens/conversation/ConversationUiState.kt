@@ -2,7 +2,7 @@ package edu.pwr.navcomsys.ships.screens.conversation
 
 data class ConversationUiState(
     val input: String = "",
-    val messages: List<ConversationMessageData> = listOf(ConversationMessageData.mock2(), ConversationMessageData.mock1()),
+    val messages: List<ConversationMessageData> = listOf(),
     val accountData: AccountData = AccountData(),
     val isLoading: Boolean = false,
 )
