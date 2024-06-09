@@ -49,7 +49,7 @@ class PeerRepository(
     private val hostTimerMap: MutableMap<String, Timer> = mutableMapOf()
 
     init {
-        mockLocations()
+//        mockLocations()
         // Listen to location changes
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -125,36 +125,34 @@ class PeerRepository(
         sendMessage(ownerHost, json)
     }
 
-    fun sendLocationInfo(ownerHost: String) {
-        val deviceName = this.deviceName
+    fun sendLocationInfo() {
         val ip = getIpAddress()
-
-        val timer = Timer()
-        val task = object : TimerTask() {
-            override fun run() {
-                Log.d(TAG, "deviceName to send: $deviceName")
-                Log.d(TAG, "IP address to send: $ip")
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    val user = userInfoRepository.getUser() ?: return@launch
-                    lastLocation?.let {
-                        val locationDto = LocationDto(
-                            username = user.username,
-                            shipName = user.shipName,
-                            description = user.description,
-                            ipAddress = ip,
-                            xCoordinate = it.latitude,
-                            yCoordinate = it.longitude
-                        )
-                        val json = convertToJson(locationDto, MessageType.DEVICE_INFO)
-                        sendMessage(ownerHost, json)
+        for (device in connectedDevices) {
+            if (device.deviceName != deviceName) {
+                val timer = Timer()
+                val task = object : TimerTask() {
+                    override fun run() {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val user = userInfoRepository.getUser() ?: return@launch
+                            lastLocation?.let {
+                                val locationDto = LocationDto(
+                                    username = user.username,
+                                    shipName = user.shipName,
+                                    description = user.description,
+                                    ipAddress = ip,
+                                    xCoordinate = it.latitude,
+                                    yCoordinate = it.longitude
+                                )
+                                val json = convertToJson(locationDto, MessageType.DEVICE_INFO)
+                                sendMessage(device.ipAddress, json)
+                            }
+                        }
                     }
                 }
+                timer.schedule(task, 0, 5000)
+                hostTimerMap[device.ipAddress] = timer
             }
         }
-
-        timer.schedule(task, 0, 5000)
-        hostTimerMap[ownerHost] = timer
     }
 
     fun onDisconnectPeer() {
