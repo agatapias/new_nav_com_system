@@ -129,6 +129,5 @@ class MessageListener(
         audioConnectRequestMessages.emit(message)
     }
 
-
     private fun doNothing() {}
 }

@@ -150,7 +150,6 @@ class WiFiDirectBroadcastReceiver(
                 } else {
                     info.groupOwnerAddress.hostAddress?.let { peerRepository.sendIPInfo(it) }
                 }
-                peerRepository.sendLocationInfo()
             })
         } else {
             // We are disconnected

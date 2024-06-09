@@ -46,7 +46,6 @@ class PeerRepository(
     private var lastLocation: Location? = null
     private val scope = CoroutineScope(Dispatchers.IO)
     private val gson = Gson()
-    private val hostTimerMap: MutableMap<String, Timer> = mutableMapOf()
 
     init {
 //        mockLocations()
@@ -125,36 +124,6 @@ class PeerRepository(
         sendMessage(ownerHost, json)
     }
 
-    fun sendLocationInfo() {
-        val ip = getIpAddress()
-        for (device in connectedDevices) {
-            if (device.deviceName != deviceName) {
-                val timer = Timer()
-                val task = object : TimerTask() {
-                    override fun run() {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val user = userInfoRepository.getUser() ?: return@launch
-                            lastLocation?.let {
-                                val locationDto = LocationDto(
-                                    username = user.username,
-                                    shipName = user.shipName,
-                                    description = user.description,
-                                    ipAddress = ip,
-                                    xCoordinate = it.latitude,
-                                    yCoordinate = it.longitude
-                                )
-                                val json = convertToJson(locationDto, MessageType.DEVICE_INFO)
-                                sendMessage(device.ipAddress, json)
-                            }
-                        }
-                    }
-                }
-                timer.schedule(task, 0, 5000)
-                hostTimerMap[device.ipAddress] = timer
-            }
-        }
-    }
-
     fun onDisconnectPeer() {
         val currentPeers = connectedDevices.map { it.ipAddress }
         val currentLocations = locationFlow.value
@@ -163,7 +132,6 @@ class PeerRepository(
         locationFlow.update {
             updatedLocations
         }
-        stopHostTimer()
     }
 
     fun broadcastAddresses() {
@@ -257,15 +225,6 @@ class PeerRepository(
         val nestedJson = gson.toJson(obj)
         val messageWrapper = MessageDto(type, nestedJson)
         return gson.toJson(messageWrapper)
-    }
-
-    private fun stopHostTimer() {
-        val connectedDevicesIps = connectedDevices.map { it.ipAddress }
-        val toStop = hostTimerMap.keys.filter { it !in connectedDevicesIps }
-        toStop.forEach { key ->
-            hostTimerMap[key]?.cancel()
-            hostTimerMap.remove(key)
-        }
     }
 
     fun getHostByUsername(username: String) : String? {
