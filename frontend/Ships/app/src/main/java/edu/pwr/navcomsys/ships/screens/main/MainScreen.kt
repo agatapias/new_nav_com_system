@@ -76,6 +76,12 @@ private fun MainScreenContent(
     ShipMarkerPopUp(
         isVisible = uiState.isPopUpVisible,
         ship = uiState.ship?.toShipData(),
+        onCallClick = {/*TODO*/},
+        onConversationClick = {
+            uiState.ship?.username?.let {
+                navigation.openConversation(it)
+            }
+        },
         onClose = uiInteraction::onClosePopUp
     )
     Box {

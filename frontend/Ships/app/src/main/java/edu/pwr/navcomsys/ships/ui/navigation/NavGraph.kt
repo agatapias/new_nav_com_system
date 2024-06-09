@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import edu.pwr.navcomsys.ships.screens.account.AccountScreen
+import edu.pwr.navcomsys.ships.screens.conversation.ConversationNavigation
 import edu.pwr.navcomsys.ships.screens.conversation.ConversationScreen
 import edu.pwr.navcomsys.ships.screens.dashboard.DashboardNavigation
 import edu.pwr.navcomsys.ships.screens.dashboard.DashboardScreen
@@ -17,6 +18,7 @@ import edu.pwr.navcomsys.ships.screens.main.MainScreen
 import edu.pwr.navcomsys.ships.screens.message.MessageNavigation
 import edu.pwr.navcomsys.ships.screens.message.MessageScreen
 import edu.pwr.navcomsys.ships.screens.phone.PhoneScreen
+import edu.pwr.navcomsys.ships.screens.shiplist.ShipListNavigation
 import edu.pwr.navcomsys.ships.screens.shiplist.ShipListScreen
 
 @Composable
@@ -42,8 +44,11 @@ fun NavGraph(
             MessageScreen(MessageNavigation.default(navController))
         }
 
-        composable(Screen.Conversation.path) {
-            ConversationScreen()
+        composable(Screen.Conversation.path) { backStackEntry ->
+            ConversationScreen(navigation = ConversationNavigation.default(
+                navController = navController,
+                backStackEntry = backStackEntry
+            ))
         }
 
         composable(Screen.Account.path) {
@@ -51,7 +56,7 @@ fun NavGraph(
         }
 
         composable(Screen.ShipList.path) {
-            ShipListScreen()
+            ShipListScreen(navigation = ShipListNavigation.default(navController))
         }
 
         composable(Screen.Dashboard.path) {

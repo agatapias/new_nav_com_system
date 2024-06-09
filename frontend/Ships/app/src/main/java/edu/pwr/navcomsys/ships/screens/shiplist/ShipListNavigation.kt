@@ -1,20 +1,16 @@
-package edu.pwr.navcomsys.ships.screens.main
+package edu.pwr.navcomsys.ships.screens.shiplist
 
 import androidx.navigation.NavHostController
 import edu.pwr.navcomsys.ships.ui.navigation.Screen
 import edu.pwr.navcomsys.ships.ui.navigation.appendArguments
 
-interface MainNavigation {
-    fun openShipList()
+interface ShipListNavigation {
     fun openConversation(name: String)
 
     companion object {
         fun default(
             navController: NavHostController
-        ) = object : MainNavigation {
-            override fun openShipList() {
-                navController.navigate(Screen.ShipList.path)
-            }
+        ) = object : ShipListNavigation {
 
             override fun openConversation(name: String) {
                 navController.navigate(Screen.Conversation.path.appendArguments(name))

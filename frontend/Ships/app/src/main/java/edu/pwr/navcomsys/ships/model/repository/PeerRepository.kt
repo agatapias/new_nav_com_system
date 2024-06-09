@@ -49,6 +49,7 @@ class PeerRepository(
     private val hostTimerMap: MutableMap<String, Timer> = mutableMapOf()
 
     init {
+        mockLocations()
         // Listen to location changes
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -156,6 +157,17 @@ class PeerRepository(
         hostTimerMap[ownerHost] = timer
     }
 
+    fun onDisconnectPeer() {
+        val currentPeers = connectedDevices.map { it.ipAddress }
+        val currentLocations = locationFlow.value
+        val updatedLocations = currentLocations.filter { it.ipAddress in currentPeers }
+
+        locationFlow.update {
+            updatedLocations
+        }
+        stopHostTimer()
+    }
+
     fun broadcastAddresses() {
         val broadcastDto = IPBroadcastDto(connectedDevices)
         val json = convertToJson(broadcastDto, MessageType.IP_BROADCAST)
@@ -181,16 +193,28 @@ class PeerRepository(
 
     fun updateLocation(location: LocationDto) {
         val currentLocations = locationFlow.value
-        val newLocations = currentLocations.map {
-            if (it.ipAddress == location.ipAddress) {
-                location
-            } else {
-                it
+        if (location.ipAddress !in currentLocations.map { it.ipAddress }) {
+            locationFlow.update {
+                currentLocations + listOf(location)
+            }
+        } else {
+            val newLocations = currentLocations.map {
+                if (it.ipAddress == location.ipAddress) {
+                    location
+                } else {
+                    it
+                }
+            }
+            locationFlow.update {
+                newLocations
             }
         }
-        locationFlow.update {
-            newLocations
-        }
+    }
+
+    fun getOwnIpInfo(): IPInfoDto {
+        val deviceName = this.deviceName
+        val ipAddr = getIpAddress()
+        return IPInfoDto(deviceName ?: "", ipAddr)
     }
 
     private fun mockLocations() {
@@ -273,9 +297,12 @@ class PeerRepository(
         return gson.toJson(messageWrapper)
     }
 
-    fun getOwnIpInfo(): IPInfoDto {
-        val deviceName = this.deviceName
-        val ipAddr = getIpAddress()
-        return IPInfoDto(deviceName ?: "", ipAddr)
+    private fun stopHostTimer() {
+        val connectedDevicesIps = connectedDevices.map { it.ipAddress }
+        val toStop = hostTimerMap.keys.filter { it !in connectedDevicesIps }
+        toStop.forEach { key ->
+            hostTimerMap[key]?.cancel()
+            hostTimerMap.remove(key)
+        }
     }
 }
