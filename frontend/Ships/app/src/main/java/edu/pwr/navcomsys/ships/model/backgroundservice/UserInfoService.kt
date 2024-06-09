@@ -9,7 +9,9 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
-import edu.pwr.navcomsys.ships.data.dto.UserInfoDto
+import edu.pwr.navcomsys.ships.data.dto.LocationDto
+import edu.pwr.navcomsys.ships.data.enums.MessageType
+import edu.pwr.navcomsys.ships.model.repository.PeerRepository
 import edu.pwr.navcomsys.ships.model.repository.UserInfoRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +23,7 @@ import kotlin.concurrent.timerTask
 class UserInfoService : Service() {
     private val locationManager: FusedLocationProviderClient by inject()
     private val userInfoRepository: UserInfoRepository by inject()
+    private val peerRepository: PeerRepository by inject()
 
     private var lastLocation: Location? = null
 
@@ -71,22 +74,30 @@ class UserInfoService : Service() {
                     val user = userInfoRepository.getUser()
                     Log.d("UserInfoService", "user: ${user?.username}")
                     val location = lastLocation
-                    Log.d("UserInfoService", "last location: ${lastLocation?.latitude}, ${lastLocation?.longitude}")
-                    if (location != null && user != null) {
-                        val userInfo = UserInfoDto(
-                            username = user.username,
-                            longitude = location.longitude,
-                            latitude = location.latitude
-                        )
-                        kotlin.runCatching {
-                            userInfoRepository.updateUserInfo(userInfo)
+                    Log.d(
+                        "UserInfoService",
+                        "last location: ${lastLocation?.latitude}, ${lastLocation?.longitude}"
+                    )
+
+                    for (device in peerRepository.connectedDevices) {
+                        if (user != null && location != null) {
+                            val locationDto = LocationDto(
+                                username = user.username,
+                                shipName = user.shipName,
+                                description = user.description,
+                                ipAddress = peerRepository.getOwnIpInfo().ipAddress,
+                                xCoordinate = location.latitude,
+                                yCoordinate = location.longitude
+                            )
+                            val json =
+                                peerRepository.convertToJson(locationDto, MessageType.DEVICE_INFO)
+                            peerRepository.sendMessage(device.ipAddress, json)
                         }
                     }
                 }
             }
 
-            // Schedule the task to run every minute (60000 milliseconds)
-            timer.schedule(task, 0L, 60000L)
+            timer.schedule(task, 0L, 5000)
         }
     }
 }

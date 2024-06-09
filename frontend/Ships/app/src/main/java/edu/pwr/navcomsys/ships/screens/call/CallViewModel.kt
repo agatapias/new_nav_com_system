@@ -19,17 +19,37 @@ class CallViewModel(
     private val _uiState = MutableStateFlow(CallUiState())
     val uiState = _uiState.asStateFlow()
 
+    private var ipAddress: String? = null
+
+    fun init(newIpAddress: String) {
+        if (ipAddress == null || ipAddress != newIpAddress) {
+            ipAddress = newIpAddress
+        }
+    }
+
     fun onDeclineCall() {
 
     }
 
-    fun sendRecording() {
-
-    }
-
-    fun acceptConversation() {
-        // send accept signal from peer repo
-    }
+//    fun sendRecording() {
+//        val locationDto = LocationDto(
+//            username = user.username,
+//            shipName = user.shipName,
+//            description = user.description,
+//            ipAddress = ip,
+//            xCoordinate = it.latitude,
+//            yCoordinate = it.longitude
+//        )
+//        val json = convertToJson(locationDto, MessageType.AUDIO)
+//        peerRepository.sendMessage(ipAddress, )
+//    }
+//
+//    fun acceptConversation() {
+//        // send accept signal from peer repo
+//        val acceptMessage = AudioMessageDto(
+//
+//        )
+//    }
 
     fun endConversation() {
         // send ending signal from peer repo
