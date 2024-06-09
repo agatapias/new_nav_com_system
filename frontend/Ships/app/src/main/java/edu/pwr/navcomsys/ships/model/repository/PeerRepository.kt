@@ -1,6 +1,12 @@
 package edu.pwr.navcomsys.ships.model.repository
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
 import android.util.Log
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.gson.Gson
 import edu.pwr.navcomsys.ships.data.dto.IPBroadcastDto
 import edu.pwr.navcomsys.ships.data.dto.IPInfoDto
@@ -26,15 +32,43 @@ import java.util.TimerTask
 
 private const val TAG = "PeerRepository"
 
-class PeerRepository {
+class PeerRepository(
+    private val userInfoRepository: UserInfoRepository,
+    locationManager: FusedLocationProviderClient,
+    context: Context
+) {
     var connectedDevices: List<IPInfoDto> = mutableListOf()
     val locationFlow: MutableStateFlow<List<LocationDto>> = MutableStateFlow(emptyList())
-    private val scope = CoroutineScope(Dispatchers.IO)
-    private val gson = Gson()
     var deviceName: String? = null
 
+    private var lastLocation: Location? = null
+    private val scope = CoroutineScope(Dispatchers.IO)
+    private val gson = Gson()
+    private val hostTimerMap: MutableMap<String, Timer> = mutableMapOf()
+
     init {
-        mockLocations()
+        // Listen to location changes
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // whatever
+        } else {
+            locationManager.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    location?.let {
+                        lastLocation = it
+                    }
+                }
+                .addOnFailureListener {
+                    // Handle the failure
+                    Log.e("PeerRepository","getting last location failed", it)
+                }
+        }
     }
 
     fun sendMessage(host: String, msg: String) {
@@ -78,6 +112,38 @@ class PeerRepository {
         val ipInfoDto = IPInfoDto(deviceName ?: "", ip)
         val json = convertToJson(ipInfoDto, MessageType.IP_INFO)
         sendMessage(ownerHost, json)
+    }
+
+    fun sendLocationInfo(ownerHost: String) {
+        val deviceName = this.deviceName
+        val ip = getIpAddress()
+
+        val timer = Timer()
+        val task = object : TimerTask() {
+            override fun run() {
+                Log.d(TAG, "deviceName to send: $deviceName")
+                Log.d(TAG, "IP address to send: $ip")
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    val user = userInfoRepository.getUser() ?: return@launch
+                    lastLocation?.let {
+                        val locationDto = LocationDto(
+                            username = user.username,
+                            shipName = user.shipName,
+                            description = user.description,
+                            ipAddress = ip,
+                            xCoordinate = it.latitude,
+                            yCoordinate = it.longitude
+                        )
+                        val json = convertToJson(locationDto, MessageType.DEVICE_INFO)
+                        sendMessage(ownerHost, json)
+                    }
+                }
+            }
+        }
+
+        timer.schedule(task, 0, 5000)
+        hostTimerMap[ownerHost] = timer
     }
 
     fun broadcastAddresses() {

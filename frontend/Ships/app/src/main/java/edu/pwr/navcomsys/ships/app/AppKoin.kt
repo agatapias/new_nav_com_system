@@ -41,7 +41,7 @@ object AppKoin {
     }
 
     private val repositories = module {
-        single { PeerRepository() }
+        single { PeerRepository(get(), get(), androidContext()) }
         single { UserInfoRepository(get(), get()) }
         single { SignalRepository(get()) }
         single { ChatMessageRepository(get(), get()) }
