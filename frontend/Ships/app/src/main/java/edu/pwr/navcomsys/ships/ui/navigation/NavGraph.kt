@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import edu.pwr.navcomsys.ships.screens.account.AccountScreen
+import edu.pwr.navcomsys.ships.screens.conversation.ConversationNavigation
 import edu.pwr.navcomsys.ships.screens.conversation.ConversationScreen
 import edu.pwr.navcomsys.ships.screens.dashboard.DashboardNavigation
 import edu.pwr.navcomsys.ships.screens.dashboard.DashboardScreen
@@ -42,8 +43,11 @@ fun NavGraph(
             MessageScreen(MessageNavigation.default(navController))
         }
 
-        composable(Screen.Conversation.path) {
-            ConversationScreen()
+        composable(Screen.Conversation.path) { backStackEntry ->
+            ConversationScreen(navigation = ConversationNavigation.default(
+                navController = navController,
+                backStackEntry = backStackEntry
+            ))
         }
 
         composable(Screen.Account.path) {

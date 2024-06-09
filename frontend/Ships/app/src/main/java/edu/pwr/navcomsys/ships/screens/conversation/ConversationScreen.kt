@@ -39,7 +39,9 @@ import edu.pwr.navcomsys.ships.ui.theme.WidthSpacer
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ConversationScreen() {
+fun ConversationScreen(
+    navigation: ConversationNavigation
+) {
     val viewModel: ConversationViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val uiInteraction = ConversationUiInteraction.default(viewModel)
