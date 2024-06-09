@@ -1,13 +1,10 @@
-package edu.pwr.navcomsys.ships.screens.main
+package edu.pwr.navcomsys.ships.ui.component
 
-import android.preference.PreferenceActivity
-import android.util.EventLogTags
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,39 +14,45 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.Popup
 import edu.pwr.navcomsys.ships.R
+import edu.pwr.navcomsys.ships.data.dto.LocationDto
 import edu.pwr.navcomsys.ships.extenstion.withSuffix
-import edu.pwr.navcomsys.ships.ui.component.ShipButton
-import edu.pwr.navcomsys.ships.ui.component.ShipButtonType
-import edu.pwr.navcomsys.ships.ui.component.ShipDialog
 import edu.pwr.navcomsys.ships.ui.theme.Dimensions
 import edu.pwr.navcomsys.ships.ui.theme.HeightSpacer
 import edu.pwr.navcomsys.ships.ui.theme.Typography
 
 data class ShipData(
-    val name: String,
+    val userName: String,
+    val shipName: String,
     val location: ShipLocation,
     val description: String
 ) {
     companion object {
         fun mock() = ShipData(
-            name = "Rosa",
-            location = ShipLocation(lat = 12.44f, lng = 10.11f),
+            userName = "Miś",
+            shipName = "Rosa",
+            location = ShipLocation(lat = 12.44, lng = 10.11),
             description = "Best ship on earth"
+        )
+
+        fun LocationDto.toShipData() = ShipData(
+            userName = username,
+            shipName = shipName,
+            location = ShipLocation(lat = xCoordinate, lng = yCoordinate),
+            description = description
         )
     }
 }
 
 data class ShipLocation(
-    val lat: Float,
-    val lng: Float
+    val lat: Double,
+    val lng: Double
 )
 
 @Composable
-fun MarkerPopUp(
+fun ShipMarkerPopUp(
     isVisible: Boolean,
+    ship: ShipData?,
     onClose: () -> Unit
 ) {
     if (isVisible) {
@@ -65,17 +68,19 @@ fun MarkerPopUp(
                     contentDescription = null
                 )
                 Dimensions.space10.HeightSpacer()
-                Description(shipData = ShipData.mock())
+                if (ship != null) {
+                    Description(shipData = ship)
+                }
                 Dimensions.space10.HeightSpacer()
                 ShipButton(
                     text = stringResource(id = R.string.s10),
-                    onClick = {}
+                    onClick = { /*TODO*/ }
                 )
                 Dimensions.space14.HeightSpacer()
                 ShipButton(
                     text = stringResource(id = R.string.s11),
                     type = ShipButtonType.Secondary,
-                    onClick = {}
+                    onClick = { /*TODO*/ }
                 )
             }
         }
@@ -103,7 +108,7 @@ private fun Description(
         pushStyle(Typography.bodyLarge.toSpanStyle())
         append(stringResource(id = R.string.s5).withSuffix(": "))
         pushStyle(Typography.bodyLarge.copy(fontWeight = FontWeight.Bold).toSpanStyle())
-        append(shipData.name)
+        append(shipData.shipName)
         append("\n")
 
         pop()

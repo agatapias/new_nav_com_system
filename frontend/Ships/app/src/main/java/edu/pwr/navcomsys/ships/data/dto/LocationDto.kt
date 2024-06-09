@@ -7,4 +7,15 @@ data class LocationDto(
     val ipAddress: String,
     val xCoordinate: Double,
     val yCoordinate: Double
-)
+) {
+    companion object {
+        fun mock() = LocationDto(
+            username = "Miś",
+            shipName = "Miś's ship",
+            description = "Best ship",
+            ipAddress = "103.42.56.9",
+            xCoordinate = 14.987,
+            yCoordinate = 13.232
+        )
+    }
+}

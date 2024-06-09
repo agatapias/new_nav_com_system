@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -35,11 +34,11 @@ private val SCREENS_WITHOUT_BOTTOM_BAR = listOf<String>()
 @Composable
 fun BottomNavigationBar(
     navController: NavHostController,
-    startDestination: String = Screen.Main.path,
+    startDestination: String = Screen.Dashboard.path,
     showMessageDot: Boolean
 ) {
     val bottomNavItems: List<Screen> = listOf(
-        Screen.Main,
+        Screen.Dashboard,
         Screen.Calls,
         Screen.Messages,
         Screen.Account,

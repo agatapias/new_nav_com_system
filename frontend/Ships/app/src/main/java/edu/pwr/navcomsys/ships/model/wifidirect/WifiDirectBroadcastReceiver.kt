@@ -149,11 +149,13 @@ class WiFiDirectBroadcastReceiver(
                     peerRepository.connectedDevices = newConnectedDevices
                 } else {
                     info.groupOwnerAddress.hostAddress?.let { peerRepository.sendIPInfo(it) }
+                    info.groupOwnerAddress.hostAddress?.let { peerRepository.sendLocationInfo(it) }
                 }
             })
         } else {
             // We are disconnected
             Log.d(TAG, "Disconnected from peer")
+            // TODO: stop sending location to host
             onDisconnected()
         }
     }
