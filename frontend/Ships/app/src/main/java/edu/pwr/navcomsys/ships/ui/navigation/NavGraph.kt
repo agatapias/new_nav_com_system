@@ -10,10 +10,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import edu.pwr.navcomsys.ships.screens.account.AccountScreen
 import edu.pwr.navcomsys.ships.screens.conversation.ConversationScreen
+import edu.pwr.navcomsys.ships.screens.main.MainNavigation
 import edu.pwr.navcomsys.ships.screens.main.MainScreen
 import edu.pwr.navcomsys.ships.screens.message.MessageNavigation
 import edu.pwr.navcomsys.ships.screens.message.MessageScreen
 import edu.pwr.navcomsys.ships.screens.phone.PhoneScreen
+import edu.pwr.navcomsys.ships.screens.shiplist.ShipListScreen
 
 @Composable
 fun NavGraph(
@@ -27,7 +29,7 @@ fun NavGraph(
         modifier = Modifier.padding(innerPadding)
     ) {
         composable(Screen.Main.path) {
-            MainScreen()
+            MainScreen(MainNavigation.default(navController))
         }
 
         composable(Screen.Calls.path) {
@@ -44,6 +46,10 @@ fun NavGraph(
 
         composable(Screen.Account.path) {
             AccountScreen()
+        }
+
+        composable(Screen.ShipList.path) {
+            ShipListScreen()
         }
     }
 }

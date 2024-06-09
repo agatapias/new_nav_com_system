@@ -42,4 +42,8 @@ sealed class Screen(
     object Conversation : Screen(
         path = "conversation",  // TODO: /{id}
     )
+
+    object ShipList : Screen(
+        path = "shipList",
+    )
 }

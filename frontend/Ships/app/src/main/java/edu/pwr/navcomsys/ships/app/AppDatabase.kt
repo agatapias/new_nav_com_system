@@ -12,7 +12,8 @@ import edu.pwr.navcomsys.ships.model.datasource.local.UserLocalDataSource
 
 @Database(
     entities = [
-        User::class
+        User::class,
+        ChatMessage::class
     ],
     version = 1
 )

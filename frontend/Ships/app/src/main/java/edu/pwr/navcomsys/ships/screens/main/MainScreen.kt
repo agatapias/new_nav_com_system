@@ -40,33 +40,38 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import edu.pwr.navcomsys.ships.R
-import edu.pwr.navcomsys.ships.screens.main.ShipData.Companion.toShipData
 import edu.pwr.navcomsys.ships.ui.component.Loader
+import edu.pwr.navcomsys.ships.ui.component.ShipData.Companion.toShipData
+import edu.pwr.navcomsys.ships.ui.component.ShipMarkerPopUp
 import edu.pwr.navcomsys.ships.ui.theme.Dimensions
 import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    navigation: MainNavigation
+) {
     val viewModel: MainViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val uiInteraction = MainUiInteraction.default(viewModel)
     MainScreenContent(
         uiState = uiState,
-        uiInteraction = uiInteraction
+        uiInteraction = uiInteraction,
+        navigation = navigation
     )
 }
 
 @Composable
 private fun MainScreenContent(
     uiState: MainUiState,
-    uiInteraction: MainUiInteraction
+    uiInteraction: MainUiInteraction,
+    navigation: MainNavigation
 ) {
     val context = LocalContext.current
     if (uiState.isLoading) {
         Loader(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
     }
-    MarkerPopUp(
+    ShipMarkerPopUp(
         isVisible = uiState.isPopUpVisible,
         ship = uiState.ship?.toShipData(),
         onClose = uiInteraction::onClosePopUp
@@ -146,7 +151,7 @@ private fun MainScreenContent(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(Dimensions.space20),
-            onClick = {}
+            onClick = navigation::openShipList
         )
     }
 }

@@ -2,7 +2,6 @@ package edu.pwr.navcomsys.ships.data.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.Date
 
 @Entity(tableName = "chat_message")
 data class ChatMessage(
@@ -10,5 +9,5 @@ data class ChatMessage(
     val fromUsername: String,
     val toUsername: String,
     val message: String,
-    val createdDate: Date
+    val createdDate: String
 )

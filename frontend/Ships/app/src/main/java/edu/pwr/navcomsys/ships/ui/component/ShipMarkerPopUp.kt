@@ -1,4 +1,4 @@
-package edu.pwr.navcomsys.ships.screens.main
+package edu.pwr.navcomsys.ships.ui.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -17,9 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import edu.pwr.navcomsys.ships.R
 import edu.pwr.navcomsys.ships.data.dto.LocationDto
 import edu.pwr.navcomsys.ships.extenstion.withSuffix
-import edu.pwr.navcomsys.ships.ui.component.ShipButton
-import edu.pwr.navcomsys.ships.ui.component.ShipButtonType
-import edu.pwr.navcomsys.ships.ui.component.ShipDialog
 import edu.pwr.navcomsys.ships.ui.theme.Dimensions
 import edu.pwr.navcomsys.ships.ui.theme.HeightSpacer
 import edu.pwr.navcomsys.ships.ui.theme.Typography
@@ -53,7 +50,7 @@ data class ShipLocation(
 )
 
 @Composable
-fun MarkerPopUp(
+fun ShipMarkerPopUp(
     isVisible: Boolean,
     ship: ShipData?,
     onClose: () -> Unit

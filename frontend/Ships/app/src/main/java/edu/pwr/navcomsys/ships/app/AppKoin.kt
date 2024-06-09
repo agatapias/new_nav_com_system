@@ -15,6 +15,7 @@ import edu.pwr.navcomsys.ships.screens.conversation.ConversationViewModel
 import edu.pwr.navcomsys.ships.screens.main.MainViewModel
 import edu.pwr.navcomsys.ships.screens.message.MessageViewModel
 import edu.pwr.navcomsys.ships.screens.phone.PhoneViewModel
+import edu.pwr.navcomsys.ships.screens.shiplist.ShipListViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -52,6 +53,7 @@ object AppKoin {
         viewModelOf(::MessageViewModel)
         viewModelOf(::ConversationViewModel)
         viewModelOf(::AccountViewModel)
+        viewModelOf(::ShipListViewModel)
     }
 
     private val modules by lazy {
