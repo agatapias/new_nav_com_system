@@ -1,5 +1,6 @@
 package edu.pwr.navcomsys.ships.screens.message
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import edu.pwr.navcomsys.ships.R
@@ -13,6 +14,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+val TAG = "messages"
+
 class MessageViewModel(
     val messageListener: MessageListener,
     val chatMessageRepository: ChatMessageRepository,
@@ -22,7 +25,9 @@ class MessageViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
+        Log.d(TAG, "1")
         viewModelScope.launch {
+            Log.d(TAG, "2")
             messageListener.chatMessages
                 .filter { it != null }
                 .collect{
@@ -30,9 +35,9 @@ class MessageViewModel(
                     val newBuffer = buffer + it!!
                     _uiState.update { state -> state.copy(messageBuffer = newBuffer) }
                 }
-
+            Log.d(TAG, "3")
             val user = userInfoRepository.getUser()
-
+            Log.d(TAG, "4")
             val chatMessageHistory = chatMessageRepository.getAllMessages()
                 .groupBy {
                     if (it.toUsername == user?.username) {
@@ -47,7 +52,7 @@ class MessageViewModel(
                     val name = if (it.fromUsername == user?.username) it.toUsername else it.fromUsername
                     MessageData(R.drawable.ic_ship, name, it.createdDate, it.createdTime, it.message)
                 }
-
+            Log.d(TAG, "5")
             _uiState.map { it.messageBuffer }.collect {
                 val newMessages = it.groupBy { el -> el.fromUsername }
                     .map { el -> el.value.maxBy { value -> value.createdDate } }
@@ -56,6 +61,7 @@ class MessageViewModel(
                 val messages = filteredOldMessages + newMessages
                 _uiState.update { s -> s.copy(messages = messages) }
             }
+            Log.d(TAG, "6")
 
         }
     }

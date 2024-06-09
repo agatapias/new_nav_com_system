@@ -5,7 +5,7 @@ import edu.pwr.navcomsys.ships.R
 import edu.pwr.navcomsys.ships.data.dto.ChatMessageDto
 
 data class MessageUiState(
-    val messages: List<MessageData> = listOf(MessageData.mock(), MessageData.mock(), MessageData.mock()),
+    val messages: List<MessageData> = listOf(),
     val messageBuffer: List<ChatMessageDto> = emptyList(),
     val isLoading: Boolean = false
 )

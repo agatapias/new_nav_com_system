@@ -58,13 +58,13 @@ private fun MessageScreenContent(
             color = MaterialTheme.colorScheme.onSurface
         )
         Dimensions.space20.HeightSpacer()
-        ShipButton(
-            text = "+ Nowa wiadomość",
-            textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-            type = ShipButtonType.Secondary
-        ) {
-            navigation.onNewMessageClick()
-        }
+//        ShipButton(
+//            text = "+ Nowa wiadomość",
+//            textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+//            type = ShipButtonType.Secondary
+//        ) {
+//            navigation.onNewMessageClick()
+//        }
         LazyColumn {
             item {
                 Dimensions.space20.HeightSpacer()
@@ -73,7 +73,7 @@ private fun MessageScreenContent(
             items(uiState.messages) {
                 Message(
                     data = it,
-                    onMessageClick = navigation::onConversationClick
+                    onMessageClick = { e -> navigation.onConversationClick(it.name)}
                 )
             }
 
