@@ -98,7 +98,7 @@ private fun Message(
         }
     }
     Column(
-        modifier = Modifier.clickable { onMessageClick(data.conversationId) }
+        modifier = Modifier.clickable { onMessageClick(data.name) }
     ) {
         Dimensions.space20.HeightSpacer()
         Row(

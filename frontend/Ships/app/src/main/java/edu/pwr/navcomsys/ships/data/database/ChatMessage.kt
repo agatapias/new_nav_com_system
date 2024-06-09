@@ -9,5 +9,6 @@ data class ChatMessage(
     val fromUsername: String,
     val toUsername: String,
     val message: String,
-    val createdDate: String
+    val createdDate: String,
+    val createdTime: String
 )

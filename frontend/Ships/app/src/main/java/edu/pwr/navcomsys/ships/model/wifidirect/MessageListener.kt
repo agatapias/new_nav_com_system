@@ -2,12 +2,14 @@ package edu.pwr.navcomsys.ships.model.wifidirect
 
 import android.util.Log
 import com.google.gson.Gson
+import edu.pwr.navcomsys.ships.data.database.ChatMessage
 import edu.pwr.navcomsys.ships.data.dto.ChatMessageDto
 import edu.pwr.navcomsys.ships.data.dto.IPBroadcastDto
 import edu.pwr.navcomsys.ships.data.dto.IPInfoDto
 import edu.pwr.navcomsys.ships.data.dto.LocationDto
 import edu.pwr.navcomsys.ships.data.dto.MessageDto
 import edu.pwr.navcomsys.ships.data.enums.MessageType
+import edu.pwr.navcomsys.ships.model.repository.ChatMessageRepository
 import edu.pwr.navcomsys.ships.model.repository.PeerRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +23,8 @@ import java.net.Socket
 private const val TAG = "MessageListener"
 
 class MessageListener(
-    private val peerRepository: PeerRepository
+    private val peerRepository: PeerRepository,
+    private val chatMessageRepository: ChatMessageRepository
 ) {
 
     private val gson = Gson()
@@ -99,10 +102,17 @@ class MessageListener(
 
     private suspend fun handleChatMessage(msg: String) {
         val chatMessage = gson.fromJson(msg, ChatMessageDto::class.java)
+        val chatMessageEntity = ChatMessage(
+            0,
+            chatMessage.fromUsername,
+            chatMessage.toUsername,
+            chatMessage.message,
+            chatMessage.createdDate,
+            chatMessage.createdTime
+        )
+        chatMessageRepository.insertMessage(chatMessageEntity)
         chatMessages.emit(chatMessage)
     }
 
-    private fun doNothing() {
-
-    }
+    private fun doNothing() {}
 }

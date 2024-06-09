@@ -11,7 +11,6 @@ data class MessageUiState(
 )
 
 data class MessageData(
-    val conversationId: String,
     @DrawableRes val image: Int,
     val name: String,
     val date: String,
@@ -20,7 +19,6 @@ data class MessageData(
 ) {
     companion object {
         fun mock() = MessageData(
-            conversationId = "1",
             image = R.drawable.ic_ship,
             name = "Rosa",
             date = "12.03.2024",
