@@ -125,36 +125,34 @@ class PeerRepository(
         sendMessage(ownerHost, json)
     }
 
-    fun sendLocationInfo(ownerHost: String) {
-        val deviceName = this.deviceName
+    fun sendLocationInfo() {
         val ip = getIpAddress()
-
-        val timer = Timer()
-        val task = object : TimerTask() {
-            override fun run() {
-                Log.d(TAG, "deviceName to send: $deviceName")
-                Log.d(TAG, "IP address to send: $ip")
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    val user = userInfoRepository.getUser() ?: return@launch
-                    lastLocation?.let {
-                        val locationDto = LocationDto(
-                            username = user.username,
-                            shipName = user.shipName,
-                            description = user.description,
-                            ipAddress = ip,
-                            xCoordinate = it.latitude,
-                            yCoordinate = it.longitude
-                        )
-                        val json = convertToJson(locationDto, MessageType.DEVICE_INFO)
-                        sendMessage(ownerHost, json)
+        for (device in connectedDevices) {
+            if (device.deviceName != deviceName) {
+                val timer = Timer()
+                val task = object : TimerTask() {
+                    override fun run() {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val user = userInfoRepository.getUser() ?: return@launch
+                            lastLocation?.let {
+                                val locationDto = LocationDto(
+                                    username = user.username,
+                                    shipName = user.shipName,
+                                    description = user.description,
+                                    ipAddress = ip,
+                                    xCoordinate = it.latitude,
+                                    yCoordinate = it.longitude
+                                )
+                                val json = convertToJson(locationDto, MessageType.DEVICE_INFO)
+                                sendMessage(device.ipAddress, json)
+                            }
+                        }
                     }
                 }
+                timer.schedule(task, 0, 5000)
+                hostTimerMap[device.ipAddress] = timer
             }
         }
-
-        timer.schedule(task, 0, 5000)
-        hostTimerMap[ownerHost] = timer
     }
 
     fun onDisconnectPeer() {
@@ -217,42 +215,6 @@ class PeerRepository(
         return IPInfoDto(deviceName ?: "", ipAddr)
     }
 
-    private fun mockLocations() {
-        var diff = 0
-        val timer = Timer()
-        val task = object : TimerTask() {
-            override fun run() {
-                println("Task executed at: ${System.currentTimeMillis()}")
-                locationFlow.update {
-                    listOf(
-                        LocationDto.mock().copy(
-                            username = "Miś",
-                            ipAddress = "10.11",
-                            xCoordinate = 12.343 + diff,
-                            yCoordinate = 12.442 + diff
-                        ),
-                        LocationDto.mock().copy(
-                            username = "Miś 2",
-                            ipAddress = "10.12",
-                            xCoordinate = 9.343 + diff,
-                            yCoordinate = 9.442 + diff
-                        ),
-                        LocationDto.mock().copy(
-                            username = "Miś 3",
-                            ipAddress = "10.13",
-                            xCoordinate = 16.343 + diff,
-                            yCoordinate = 24.442 + diff
-                        )
-                    )
-                }
-                diff++
-            }
-        }
-
-        // Schedule the task to run every 5 seconds with an initial delay of 0 seconds
-        timer.schedule(task, 0, 5000)
-    }
-
     private fun getLocalIPAddress(): ByteArray? {
         try {
             val en = NetworkInterface.getNetworkInterfaces()
@@ -308,5 +270,41 @@ class PeerRepository(
 
     fun getHostByUsername(username: String) : String? {
         return locationFlow.value.filter { it.username == username }.firstOrNull()?.ipAddress
+    }
+
+    private fun mockLocations() {
+        var diff = 0
+        val timer = Timer()
+        val task = object : TimerTask() {
+            override fun run() {
+                println("Task executed at: ${System.currentTimeMillis()}")
+                locationFlow.update {
+                    listOf(
+                        LocationDto.mock().copy(
+                            username = "Miś",
+                            ipAddress = "10.11",
+                            xCoordinate = 12.343 + diff,
+                            yCoordinate = 12.442 + diff
+                        ),
+                        LocationDto.mock().copy(
+                            username = "Miś 2",
+                            ipAddress = "10.12",
+                            xCoordinate = 9.343 + diff,
+                            yCoordinate = 9.442 + diff
+                        ),
+                        LocationDto.mock().copy(
+                            username = "Miś 3",
+                            ipAddress = "10.13",
+                            xCoordinate = 16.343 + diff,
+                            yCoordinate = 24.442 + diff
+                        )
+                    )
+                }
+                diff++
+            }
+        }
+
+        // Schedule the task to run every 5 seconds with an initial delay of 0 seconds
+        timer.schedule(task, 0, 5000)
     }
 }

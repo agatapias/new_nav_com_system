@@ -53,8 +53,6 @@ class MainActivity : ComponentActivity(){
         addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
     }
 
-
-
     companion object {
         const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }

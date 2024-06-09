@@ -3,6 +3,7 @@ package edu.pwr.navcomsys.ships.model.wifidirect
 import android.util.Log
 import com.google.gson.Gson
 import edu.pwr.navcomsys.ships.data.database.ChatMessage
+import edu.pwr.navcomsys.ships.data.dto.AudioMessageDto
 import edu.pwr.navcomsys.ships.data.dto.ChatMessageDto
 import edu.pwr.navcomsys.ships.data.dto.IPBroadcastDto
 import edu.pwr.navcomsys.ships.data.dto.IPInfoDto
@@ -30,6 +31,8 @@ class MessageListener(
     private val gson = Gson()
     private val scope = CoroutineScope(Dispatchers.IO)
     val chatMessages: MutableStateFlow<ChatMessageDto?> = MutableStateFlow(null)
+    val audioMessages: MutableStateFlow<AudioMessageDto?> = MutableStateFlow(null)
+    val audioConnectRequestMessages: MutableStateFlow<ChatMessageDto?> = MutableStateFlow(null)
 
     fun startListening() {
         Log.d(TAG, "started listening for messages")
@@ -64,6 +67,8 @@ class MessageListener(
                             MessageType.IP_INFO -> handleIPInfoMessage(message.encodedJson)
                             MessageType.IP_BROADCAST -> handleIPBroadcastMessage(message.encodedJson)
                             MessageType.DEVICE_INFO -> handleLocationMessage(message.encodedJson)
+                            MessageType.AUDIO -> handleAudioMessage(message.encodedJson)
+                            MessageType.AUDIO_CONNECT_REQUEST -> handleAudioConnectRequestMessage(message.encodedJson)
                             MessageType.CHAT -> handleChatMessage(message.encodedJson)
                             else -> doNothing()
                         }
@@ -113,6 +118,17 @@ class MessageListener(
         chatMessageRepository.insertMessage(chatMessageEntity)
         chatMessages.emit(chatMessage)
     }
+
+    private suspend fun handleAudioMessage(msg: String) {
+        val message = gson.fromJson(msg, AudioMessageDto::class.java)
+        audioMessages.emit(message)
+    }
+
+    private suspend fun handleAudioConnectRequestMessage(msg: String) {
+        val message = gson.fromJson(msg, ChatMessageDto::class.java)
+        audioConnectRequestMessages.emit(message)
+    }
+
 
     private fun doNothing() {}
 }

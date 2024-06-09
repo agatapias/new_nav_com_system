@@ -149,8 +149,8 @@ class WiFiDirectBroadcastReceiver(
                     peerRepository.connectedDevices = newConnectedDevices
                 } else {
                     info.groupOwnerAddress.hostAddress?.let { peerRepository.sendIPInfo(it) }
-                    info.groupOwnerAddress.hostAddress?.let { peerRepository.sendLocationInfo(it) }
                 }
+                peerRepository.sendLocationInfo()
             })
         } else {
             // We are disconnected
