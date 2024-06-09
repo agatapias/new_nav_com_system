@@ -23,9 +23,18 @@ class MainViewModel(
         _uiState.update { it.copy(isLoading = false) }
         viewModelScope.launch(Dispatchers.Default) {
             peerRepository.getLocations().collectLatest { locations ->
-                Log.d("Map", "new ship locations in vm: $locations")
+                _uiState.update {
+                    it.copy(
+                        shipLocations = locations
+                    )
+                }
+            }
+        }
+
+        viewModelScope.launch(Dispatchers.Default) {
+            peerRepository.getOwnLocation().collectLatest { loc ->
                 _uiState.update { it.copy(
-                    shipLocations = locations
+                    yourLocation = loc
                 ) }
             }
         }

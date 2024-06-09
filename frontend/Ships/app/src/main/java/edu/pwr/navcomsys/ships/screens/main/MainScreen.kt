@@ -46,6 +46,7 @@ import edu.pwr.navcomsys.ships.ui.component.ShipMarkerPopUp
 import edu.pwr.navcomsys.ships.ui.theme.Dimensions
 import org.koin.androidx.compose.koinViewModel
 
+private const val YOU_KEY = "you"
 
 @Composable
 fun MainScreen(
@@ -61,6 +62,7 @@ fun MainScreen(
     )
 }
 
+@SuppressLint("ResourceAsColor")
 @Composable
 private fun MainScreenContent(
     uiState: MainUiState,
@@ -103,6 +105,27 @@ private fun MainScreenContent(
                 map.apply {
                     Log.d("Map", "map in update called")
                     Log.d("Map", "markers: $markers")
+                    uiState.yourLocation?.let { loc ->
+                        if (markers.containsKey(YOU_KEY)) {
+                            val currentMarker = markers[YOU_KEY]
+                            currentMarker?.position = LatLng(loc.lat, loc.lng)
+                            currentMarker?.let {
+                                val modifiedMarkers = markers.toMutableMap()
+                                modifiedMarkers[YOU_KEY] = currentMarker
+                                markers = modifiedMarkers
+                            }
+                        } else {
+                            val newMarker = mapboxMapState?.addMarker(
+                                MarkerOptions()
+                                    .position(LatLng(loc.lat, loc.lng))
+                                    .setTitle("Yes")
+                                    .setIcon(drawableToIcon(context, R.drawable.ic_my_boat, R.color.teal_700))
+                            )
+                            newMarker?.let { m ->
+                                markers = markers + (YOU_KEY to m)
+                            }
+                        }
+                    }
                     uiState.shipLocations.forEach { ship ->
                         if (markers.containsKey(ship.ipAddress)) {
                             val currentMarker = markers[ship.ipAddress]
@@ -127,9 +150,9 @@ private fun MainScreenContent(
                         }
                     }
                     val locationIds = uiState.shipLocations.map { it.ipAddress }
-                    val toRemove = markers.filter { it.key !in locationIds}
+                    val toRemove = markers.filter { it.key !in locationIds && it.key != YOU_KEY}
                     toRemove.forEach {
-                        Log.d("Map", "removed marker: ${it.key}, ${uiState.shipLocations.first { s -> s.ipAddress == it.key }}")
+                        Log.d("Map", "removed marker: ${it.key}, ${uiState.shipLocations.firstOrNull { s -> s.ipAddress == it.key }}")
                         mapboxMapState?.removeMarker(it.value)
                     }
                     mapboxMapState?.setOnMarkerClickListener { marker ->
@@ -159,8 +182,8 @@ private fun MainScreenContent(
 fun drawableToIcon(context: Context, @DrawableRes id: Int, @SuppressLint("ResourceAsColor") @ColorInt colorRes: Int = R.color.white): Icon? {
     val vectorDrawable = ResourcesCompat.getDrawable(context.resources, id, context.theme)
     val bitmap = Bitmap.createBitmap(
-        55,
-        120,
+        25,
+        60,
 //        vectorDrawable!!.intrinsicWidth,
 //        vectorDrawable.intrinsicHeight,
         Bitmap.Config.ARGB_8888

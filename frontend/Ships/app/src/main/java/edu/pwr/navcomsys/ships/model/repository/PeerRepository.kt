@@ -13,6 +13,7 @@ import edu.pwr.navcomsys.ships.data.dto.IPInfoDto
 import edu.pwr.navcomsys.ships.data.dto.LocationDto
 import edu.pwr.navcomsys.ships.data.dto.MessageDto
 import edu.pwr.navcomsys.ships.data.enums.MessageType
+import edu.pwr.navcomsys.ships.ui.component.ShipLocation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -41,6 +42,7 @@ class PeerRepository(
     val locationFlow: MutableStateFlow<List<LocationDto>> = MutableStateFlow(emptyList())
     var deviceName: String? = null
 
+    private val ownLocationFlow: MutableStateFlow<ShipLocation?> = MutableStateFlow(null)
     private var lastLocation: Location? = null
     private val scope = CoroutineScope(Dispatchers.IO)
     private val gson = Gson()
@@ -56,12 +58,20 @@ class PeerRepository(
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+            Log.d("PeerRepository","Lacking permissions")
             // whatever
         } else {
             locationManager.lastLocation
                 .addOnSuccessListener { location: Location? ->
-                    location?.let {
-                        lastLocation = it
+                    location?.let { loc ->
+                        Log.d("PeerRepository","new location: $loc")
+                        lastLocation = loc
+                        ownLocationFlow.update {
+                            ShipLocation(
+                                lat = loc.latitude,
+                                lng = loc.longitude
+                            )
+                        }
                     }
                 }
                 .addOnFailureListener {
@@ -163,6 +173,10 @@ class PeerRepository(
 
     fun getLocations() : Flow<List<LocationDto>> {
         return locationFlow.asStateFlow()
+    }
+
+    fun getOwnLocation() : Flow<ShipLocation?> {
+        return ownLocationFlow.asStateFlow()
     }
 
     fun updateLocation(location: LocationDto) {
