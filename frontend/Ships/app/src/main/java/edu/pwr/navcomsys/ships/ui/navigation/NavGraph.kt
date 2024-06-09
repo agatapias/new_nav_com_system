@@ -10,6 +10,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import edu.pwr.navcomsys.ships.screens.account.AccountScreen
 import edu.pwr.navcomsys.ships.screens.conversation.ConversationScreen
+import edu.pwr.navcomsys.ships.screens.dashboard.DashboardNavigation
+import edu.pwr.navcomsys.ships.screens.dashboard.DashboardScreen
 import edu.pwr.navcomsys.ships.screens.main.MainNavigation
 import edu.pwr.navcomsys.ships.screens.main.MainScreen
 import edu.pwr.navcomsys.ships.screens.message.MessageNavigation
@@ -21,7 +23,7 @@ import edu.pwr.navcomsys.ships.screens.shiplist.ShipListScreen
 fun NavGraph(
     navController: NavHostController,
     innerPadding: PaddingValues = PaddingValues(10.dp),
-    startDestination: String = Screen.Main.path
+    startDestination: String = Screen.Dashboard.path
 ) {
     NavHost(
         navController = navController,
@@ -50,6 +52,10 @@ fun NavGraph(
 
         composable(Screen.ShipList.path) {
             ShipListScreen()
+        }
+
+        composable(Screen.Dashboard.path) {
+            DashboardScreen(navigation = DashboardNavigation.default(navController))
         }
     }
 }

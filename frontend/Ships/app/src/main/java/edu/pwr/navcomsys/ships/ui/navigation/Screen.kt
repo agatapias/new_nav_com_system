@@ -11,11 +11,11 @@ sealed class Screen(
     @StringRes val label: Int? = null,
     val tag: String = ""
 ) {
-    object Main : Screen(
-        path = "main",
+    object Dashboard : Screen(
+        path = "dashboard",
         icon = R.drawable.ic_world,
         description = R.string.s3,
-        tag = "main"
+        tag = "dashboard"
     )
 
     object Calls : Screen(
@@ -37,6 +37,10 @@ sealed class Screen(
         icon = R.drawable.ic_boat,
         description = R.string.s4,
         tag = "account"
+    )
+
+    object Main : Screen(
+        path = "main",
     )
 
     object Conversation : Screen(
