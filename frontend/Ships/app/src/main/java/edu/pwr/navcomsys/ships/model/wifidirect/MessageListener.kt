@@ -2,6 +2,7 @@ package edu.pwr.navcomsys.ships.model.wifidirect
 
 import android.util.Log
 import com.google.gson.Gson
+import edu.pwr.navcomsys.ships.data.dto.ChatMessageDto
 import edu.pwr.navcomsys.ships.data.dto.IPBroadcastDto
 import edu.pwr.navcomsys.ships.data.dto.IPInfoDto
 import edu.pwr.navcomsys.ships.data.dto.LocationDto
@@ -10,6 +11,7 @@ import edu.pwr.navcomsys.ships.data.enums.MessageType
 import edu.pwr.navcomsys.ships.model.repository.PeerRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,6 +26,7 @@ class MessageListener(
 
     private val gson = Gson()
     private val scope = CoroutineScope(Dispatchers.IO)
+    val chatMessages: MutableStateFlow<ChatMessageDto?> = MutableStateFlow(null)
 
     fun startListening() {
         Log.d(TAG, "started listening for messages")
@@ -58,6 +61,7 @@ class MessageListener(
                             MessageType.IP_INFO -> handleIPInfoMessage(message.encodedJson)
                             MessageType.IP_BROADCAST -> handleIPBroadcastMessage(message.encodedJson)
                             MessageType.DEVICE_INFO -> handleLocationMessage(message.encodedJson)
+                            MessageType.CHAT -> handleChatMessage(message.encodedJson)
                             else -> doNothing()
                         }
                     }
@@ -91,6 +95,11 @@ class MessageListener(
     private fun handleLocationMessage(msg: String) {
         val broadcast = gson.fromJson(msg, LocationDto::class.java)
         peerRepository.updateLocation(broadcast)
+    }
+
+    private suspend fun handleChatMessage(msg: String) {
+        val chatMessage = gson.fromJson(msg, ChatMessageDto::class.java)
+        chatMessages.emit(chatMessage)
     }
 
     private fun doNothing() {

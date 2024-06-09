@@ -6,6 +6,7 @@ import edu.pwr.navcomsys.ships.model.datasource.remote.SignalRemoteDataSource
 import edu.pwr.navcomsys.ships.model.datasource.remote.UserInfoRemoteDataSource
 import edu.pwr.navcomsys.ships.model.datasource.remote.impl.SignalRemoteDataSourceImpl
 import edu.pwr.navcomsys.ships.model.datasource.remote.impl.UserInfoRemoteDataSourceImpl
+import edu.pwr.navcomsys.ships.model.repository.ChatMessageRepository
 import edu.pwr.navcomsys.ships.model.repository.PeerRepository
 import edu.pwr.navcomsys.ships.model.repository.SignalRepository
 import edu.pwr.navcomsys.ships.model.repository.UserInfoRepository
@@ -34,6 +35,7 @@ object AppKoin {
         singleOf(::UserInfoRemoteDataSourceImpl) bind UserInfoRemoteDataSource::class
         singleOf(::SignalRemoteDataSourceImpl) bind SignalRemoteDataSource::class
         single { get<AppDatabase>().userLocalDataSource() }
+        single { get<AppDatabase>().chatMessageLocalDataSource() }
         single { LocationServices.getFusedLocationProviderClient(androidApplication()) }
     }
 
@@ -41,6 +43,7 @@ object AppKoin {
         single { PeerRepository() }
         single { UserInfoRepository(get(), get()) }
         single { SignalRepository(get()) }
+        single { ChatMessageRepository(get(), get()) }
     }
 
     private val viewModels = module {
