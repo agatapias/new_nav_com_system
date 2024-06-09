@@ -253,7 +253,7 @@ class PeerRepository(
         return getLocalIPAddress()?.let { getDottedDecimalIP(it) } ?: "UNKNOWN"
     }
 
-    private fun convertToJson(obj: Any, type: MessageType) : String {
+    fun convertToJson(obj: Any, type: MessageType) : String {
         val nestedJson = gson.toJson(obj)
         val messageWrapper = MessageDto(type, nestedJson)
         return gson.toJson(messageWrapper)
@@ -267,7 +267,11 @@ class PeerRepository(
             hostTimerMap.remove(key)
         }
     }
-    
+
+    fun getHostByUsername(username: String) : String? {
+        return locationFlow.value.filter { it.username == username }.firstOrNull()?.ipAddress
+    }
+
     private fun mockLocations() {
         var diff = 0
         val timer = Timer()
