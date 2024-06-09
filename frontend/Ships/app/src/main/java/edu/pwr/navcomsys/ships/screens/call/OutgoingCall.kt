@@ -5,6 +5,7 @@ package edu.pwr.navcomsys.ships.screens.call
 //import com.airbnb.lottie.compose.rememberLottieComposition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,7 +40,8 @@ private val colorStops = arrayOf(
 
 @Composable
 fun OutgoingCall(
-    uiState: CallUiState
+    uiState: CallUiState,
+    uiInteraction: CallUiInteraction
 ) {
 //    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.calling_anim))
 
@@ -80,6 +82,7 @@ fun OutgoingCall(
                 modifier = Modifier
                     .size(120.dp)
                     .align(Alignment.Center)
+                    .clickable { uiInteraction.acceptCall() }
             ) {
                 Image(
                     modifier = Modifier.fillMaxSize(),
@@ -102,6 +105,7 @@ fun OutgoingCall(
                     .clip(CircleShape)
                     .background(color = Red)
                     .align(Alignment.BottomCenter)
+                    .clickable { uiInteraction.endCall() }
             ) {
                 Image(
                     modifier = Modifier
@@ -120,6 +124,6 @@ fun OutgoingCall(
 @Composable
 private fun OutgoingCallPreview() {
     ShipsTheme() {
-        OutgoingCall(uiState = CallUiState())
+        OutgoingCall(uiState = CallUiState(), uiInteraction = CallUiInteraction.empty())
     }
 }

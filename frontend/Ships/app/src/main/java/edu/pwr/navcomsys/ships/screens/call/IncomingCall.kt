@@ -2,6 +2,7 @@ package edu.pwr.navcomsys.ships.screens.call
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,7 +37,8 @@ private val colorStops = arrayOf(
 
 @Composable
 fun IncomingCall(
-    uiState: CallUiState
+    uiState: CallUiState,
+    uiInteraction: CallUiInteraction
 ) {
     Box(
         modifier = Modifier
@@ -77,6 +79,7 @@ fun IncomingCall(
                     .clip(CircleShape)
                     .background(color = Red)
                     .align(Alignment.BottomCenter)
+                    .clickable { uiInteraction.endCall() }
             ) {
                 Image(
                     modifier = Modifier
@@ -95,6 +98,6 @@ fun IncomingCall(
 @Composable
 private fun IncomingCallPreview() {
     ShipsTheme() {
-        IncomingCall(uiState = CallUiState())
+        IncomingCall(uiState = CallUiState(), uiInteraction = CallUiInteraction.empty())
     }
 }

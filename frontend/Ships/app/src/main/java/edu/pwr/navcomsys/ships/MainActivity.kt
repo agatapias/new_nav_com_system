@@ -18,10 +18,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -29,12 +29,17 @@ import androidx.navigation.compose.rememberNavController
 import edu.pwr.navcomsys.ships.model.backgroundservice.UserInfoService
 import edu.pwr.navcomsys.ships.model.repository.PeerRepository
 import edu.pwr.navcomsys.ships.model.wifidirect.MessageListener
+import edu.pwr.navcomsys.ships.screens.AppViewModel
 import edu.pwr.navcomsys.ships.ui.navigation.BottomNavigationBar
+import edu.pwr.navcomsys.ships.ui.navigation.Screen
+import edu.pwr.navcomsys.ships.ui.navigation.appendArguments
 import edu.pwr.navcomsys.ships.ui.theme.ShipsTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.androidx.compose.koinViewModel
 
 
 class MainActivity : ComponentActivity(){
@@ -143,11 +148,17 @@ class MainActivity : ComponentActivity(){
 @Composable
 fun AppContent(hasNewMessage: Boolean = false) {
     val navController = rememberNavController()
-//    val viewModel: MainViewModel = koinViewModel()
-//    val uiState by viewModel.uiState.collectAsState()
+    val viewModel: AppViewModel = koinViewModel()
 
-    val context = LocalContext.current
-//    viewModel.toast.CollectToast(context)
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.navigationEvent.collectLatest { ip ->
+                ip?.let {
+                    navController.navigate(Screen.Call.path.appendArguments(ip+"|I"))
+                }
+            }
+        }
+    }
 
     AnimatedVisibility(visible = true) {
         BottomNavigationBar(

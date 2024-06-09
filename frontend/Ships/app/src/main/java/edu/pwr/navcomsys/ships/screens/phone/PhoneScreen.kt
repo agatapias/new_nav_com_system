@@ -15,6 +15,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -28,13 +29,30 @@ import edu.pwr.navcomsys.ships.ui.component.ShipButton
 import edu.pwr.navcomsys.ships.ui.theme.Dimensions
 import edu.pwr.navcomsys.ships.ui.theme.HeightSpacer
 import edu.pwr.navcomsys.ships.ui.theme.WidthSpacer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun PhoneScreen() {
+fun PhoneScreen(
+    navigation: PhoneNavigation
+) {
     val viewModel: PhoneViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val uiInteraction = PhoneUiInteraction.default(viewModel)
+
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.navigationEvent.collectLatest { ip ->
+                ip?.let {
+                    navigation.openCall(ip+"|O")
+                }
+            }
+        }
+    }
+
     PhoneScreenContent(
         uiState = uiState,
         uiInteraction = uiInteraction
@@ -119,7 +137,7 @@ private fun Call(
                 textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                 width = 50.dp
             ) {
-                onCallClick(data.phone)
+                onCallClick(data.ip)
             }
         }
         Dimensions.space20.HeightSpacer()

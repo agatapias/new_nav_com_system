@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.gson.Gson
 import edu.pwr.navcomsys.ships.data.database.ChatMessage
 import edu.pwr.navcomsys.ships.data.dto.AudioMessageDto
+import edu.pwr.navcomsys.ships.data.dto.CallAcceptMessageDto
 import edu.pwr.navcomsys.ships.data.dto.ChatMessageDto
 import edu.pwr.navcomsys.ships.data.dto.IPBroadcastDto
 import edu.pwr.navcomsys.ships.data.dto.IPInfoDto
@@ -32,7 +33,7 @@ class MessageListener(
     private val scope = CoroutineScope(Dispatchers.IO)
     val chatMessages: MutableStateFlow<ChatMessageDto?> = MutableStateFlow(null)
     val audioMessages: MutableStateFlow<AudioMessageDto?> = MutableStateFlow(null)
-    val audioConnectRequestMessages: MutableStateFlow<ChatMessageDto?> = MutableStateFlow(null)
+    val audioConnectRequestMessages: MutableStateFlow<CallAcceptMessageDto?> = MutableStateFlow(null)
 
     fun startListening() {
         Log.d(TAG, "started listening for messages")
@@ -125,7 +126,7 @@ class MessageListener(
     }
 
     private suspend fun handleAudioConnectRequestMessage(msg: String) {
-        val message = gson.fromJson(msg, ChatMessageDto::class.java)
+        val message = gson.fromJson(msg, CallAcceptMessageDto::class.java)
         audioConnectRequestMessages.emit(message)
     }
 

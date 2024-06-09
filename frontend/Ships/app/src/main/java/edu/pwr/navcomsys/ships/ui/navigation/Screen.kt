@@ -47,6 +47,10 @@ sealed class Screen(
         path = "conversation/{arguments}",
     )
 
+    object Call : Screen(
+        path = "call/{arguments}",
+    )
+
     object ShipList : Screen(
         path = "shipList",
     )

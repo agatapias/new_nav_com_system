@@ -11,7 +11,9 @@ import edu.pwr.navcomsys.ships.model.repository.PeerRepository
 import edu.pwr.navcomsys.ships.model.repository.SignalRepository
 import edu.pwr.navcomsys.ships.model.repository.UserInfoRepository
 import edu.pwr.navcomsys.ships.model.wifidirect.MessageListener
+import edu.pwr.navcomsys.ships.screens.AppViewModel
 import edu.pwr.navcomsys.ships.screens.account.AccountViewModel
+import edu.pwr.navcomsys.ships.screens.call.CallViewModel
 import edu.pwr.navcomsys.ships.screens.conversation.ConversationViewModel
 import edu.pwr.navcomsys.ships.screens.main.MainViewModel
 import edu.pwr.navcomsys.ships.screens.message.MessageViewModel
@@ -56,6 +58,8 @@ object AppKoin {
         viewModelOf(::ConversationViewModel)
         viewModelOf(::AccountViewModel)
         viewModelOf(::ShipListViewModel)
+        viewModelOf(::AppViewModel)
+        viewModelOf(::CallViewModel)
     }
 
     private val modules by lazy {

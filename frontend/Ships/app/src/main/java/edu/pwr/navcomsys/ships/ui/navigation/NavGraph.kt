@@ -9,6 +9,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import edu.pwr.navcomsys.ships.screens.account.AccountScreen
+import edu.pwr.navcomsys.ships.screens.call.CallNavigation
+import edu.pwr.navcomsys.ships.screens.call.CallScreen
 import edu.pwr.navcomsys.ships.screens.conversation.ConversationNavigation
 import edu.pwr.navcomsys.ships.screens.conversation.ConversationScreen
 import edu.pwr.navcomsys.ships.screens.dashboard.DashboardNavigation
@@ -17,6 +19,7 @@ import edu.pwr.navcomsys.ships.screens.main.MainNavigation
 import edu.pwr.navcomsys.ships.screens.main.MainScreen
 import edu.pwr.navcomsys.ships.screens.message.MessageNavigation
 import edu.pwr.navcomsys.ships.screens.message.MessageScreen
+import edu.pwr.navcomsys.ships.screens.phone.PhoneNavigation
 import edu.pwr.navcomsys.ships.screens.phone.PhoneScreen
 import edu.pwr.navcomsys.ships.screens.shiplist.ShipListNavigation
 import edu.pwr.navcomsys.ships.screens.shiplist.ShipListScreen
@@ -37,7 +40,7 @@ fun NavGraph(
         }
 
         composable(Screen.Calls.path) {
-            PhoneScreen()
+            PhoneScreen(navigation = PhoneNavigation.default(navController))
         }
 
         composable(Screen.Messages.path) {
@@ -61,6 +64,13 @@ fun NavGraph(
 
         composable(Screen.Dashboard.path) {
             DashboardScreen(navigation = DashboardNavigation.default(navController))
+        }
+
+        composable(Screen.Call.path) { backStackEntry ->
+            CallScreen(navigation = CallNavigation.default(
+                navController = navController,
+                backStackEntry = backStackEntry
+            ))
         }
     }
 }

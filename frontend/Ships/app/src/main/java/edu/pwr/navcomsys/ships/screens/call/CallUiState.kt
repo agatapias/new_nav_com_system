@@ -5,7 +5,8 @@ data class CallUiState(
     val caller: String = "Steven Jobs",
     val receiver: String = "",
     val isOngoing: Boolean = false,
-    val callTime: String = "00:01"
+    val callTime: String = "00:01",
+    val isRecording: Boolean = false,
 )
 
 enum class CallStatus {

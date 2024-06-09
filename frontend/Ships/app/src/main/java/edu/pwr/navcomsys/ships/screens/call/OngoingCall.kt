@@ -2,6 +2,7 @@ package edu.pwr.navcomsys.ships.screens.call
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,7 +38,8 @@ private val colorStops = arrayOf(
 
 @Composable
 fun OngoingCall(
-    uiState: CallUiState
+    uiState: CallUiState,
+    uiInteraction: CallUiInteraction
 ) {
     Box(
         modifier = Modifier
@@ -78,13 +80,16 @@ fun OngoingCall(
                 )
             }
 
+            val text = if (uiState.isRecording) "Stop" else "Nagrywaj"
             ShipButton(
                 modifier = Modifier.fillMaxWidth(),
-                text = "Nagraj",
+                text = text,
                 textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             ) {
-                // TODO
+                uiInteraction.onRecordPress()
             }
+
+            Dimensions.space22.HeightSpacer()
 
             Box(
                 modifier = Modifier
@@ -92,6 +97,7 @@ fun OngoingCall(
                     .clip(CircleShape)
                     .background(color = Red)
                     .align(Alignment.BottomCenter)
+                    .clickable { uiInteraction.endCall() }
             ) {
                 Image(
                     modifier = Modifier
@@ -110,6 +116,6 @@ fun OngoingCall(
 @Composable
 private fun OngoingCallPreview() {
     ShipsTheme() {
-        OngoingCall(uiState = CallUiState())
+        OngoingCall(uiState = CallUiState(), uiInteraction = CallUiInteraction.empty())
     }
 }
