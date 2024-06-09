@@ -5,6 +5,7 @@ data class ConversationUiState(
     val messages: List<ConversationMessageData> = listOf(),
     val accountData: AccountData = AccountData(),
     val isLoading: Boolean = false,
+    val isConnected: Boolean = false
 )
 
 data class ConversationMessageData(

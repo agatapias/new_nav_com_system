@@ -70,7 +70,10 @@ class WiFiDirectBroadcastReceiver(
                 handleConnectionChanged(intent)
             }
             WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION -> {
-                // Respond to this device's wifi state changing
+//                Log.d(TAG, "WIFI_P2P_THIS_DEVICE_CHANGED_ACTION")
+//                val self = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE) as WifiP2pDevice?
+//                Log.d(TAG, "WIFI Direct device name = ${self?.deviceName}")
+//                peerRepository.deviceName = self?.deviceName
             }
         }
     }
@@ -126,8 +129,6 @@ class WiFiDirectBroadcastReceiver(
     private fun handleConnectionChanged(intent: Intent) {
         Log.d(TAG, "handleConnectionChanged called")
         val networkInfo = intent.getParcelableExtra<NetworkInfo>(WifiP2pManager.EXTRA_NETWORK_INFO)
-        val device: WifiP2pDevice? = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE)
-        peerRepository.deviceName = device?.deviceName
 
         if (networkInfo != null && networkInfo.isConnected) {
             // We are connected, request connection info to find out which device connected

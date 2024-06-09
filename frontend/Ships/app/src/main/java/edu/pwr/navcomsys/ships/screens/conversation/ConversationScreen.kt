@@ -75,11 +75,13 @@ private fun ConversationScreenContent(
             modifier = Modifier.weight(1f),
             uiState = uiState
         )
-        BottomBar(
-            input = uiState.input,
-            onValueChange = uiInteraction::onValueChange,
-            onSendMessage = uiInteraction::onSendMessage,
-        )
+        if (uiState.isConnected) {
+            BottomBar(
+                input = uiState.input,
+                onValueChange = uiInteraction::onValueChange,
+                onSendMessage = uiInteraction::onSendMessage,
+            )
+        }
     }
 }
 
@@ -238,40 +240,43 @@ private fun BottomBar(
     onValueChange: (String) -> Unit,
     onSendMessage: (String) -> Unit,
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = Dimensions.space20,
-                vertical = Dimensions.space20
-            )
-    ) {
-        Card(
-            shape = CircleShape,
-            border = BorderStroke(width = 1.5.dp, color = MaterialTheme.colorScheme.primary),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-            modifier = Modifier
+    Column {
+        Box(
+            modifier = modifier
                 .fillMaxWidth()
-                .height(45.dp)
-        ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                BasicTextField(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    value = input,
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    onValueChange = {
-                        onValueChange(it)
-                    },
+                .padding(
+                    horizontal = Dimensions.space20,
+                    vertical = Dimensions.space20
                 )
+        ) {
+            Card(
+                shape = CircleShape,
+                border = BorderStroke(width = 1.5.dp, color = MaterialTheme.colorScheme.primary),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp)
+            ) {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    BasicTextField(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp),
+                        value = input,
+                        textStyle = MaterialTheme.typography.bodyLarge,
+                        onValueChange = {
+                            onValueChange(it)
+                        },
+                    )
+                }
             }
         }
-        Button(onClick = { onSendMessage(input) }, modifier = Modifier.align(Alignment.CenterEnd)) {
+        Button(onClick = { onSendMessage(input) }, enabled = true) {
             Text(text = "Send")
         }
     }
+
 }

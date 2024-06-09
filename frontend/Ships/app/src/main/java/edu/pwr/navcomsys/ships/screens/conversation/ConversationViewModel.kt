@@ -71,6 +71,9 @@ class ConversationViewModel(
                     _uiState.update { it.copy(messages = messageHistory) }
                 }
             }
+            if (peerRepository.locationFlow.value.any { it.username == conversationUsername }) {
+                _uiState.update { it.copy(isConnected = true) }
+            }
         }
     }
 
@@ -90,6 +93,7 @@ class ConversationViewModel(
             val createdTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
 
             if (conversationUsername == null || host == null) {
+                _uiState.update { it.copy(isConnected = false) }
                 return@launch
             }
 
@@ -117,6 +121,9 @@ class ConversationViewModel(
             chatMessageRepository.insertMessage(chatMessageEntity)
 
             addMessage(chatMessage)
+            _uiState.update {
+                it.copy(input = "")
+            }
         }
     }
 
