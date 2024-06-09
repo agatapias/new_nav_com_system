@@ -29,7 +29,6 @@ import androidx.navigation.compose.rememberNavController
 import edu.pwr.navcomsys.ships.model.backgroundservice.UserInfoService
 import edu.pwr.navcomsys.ships.model.repository.PeerRepository
 import edu.pwr.navcomsys.ships.model.wifidirect.MessageListener
-import edu.pwr.navcomsys.ships.model.wifidirect.MessageServerAsyncTask
 import edu.pwr.navcomsys.ships.ui.navigation.BottomNavigationBar
 import edu.pwr.navcomsys.ships.ui.theme.ShipsTheme
 import kotlinx.coroutines.CoroutineScope
@@ -50,8 +49,6 @@ class MainActivity : ComponentActivity(){
         addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
         addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
     }
-
-
 
     companion object {
         const val LOCATION_PERMISSION_REQUEST_CODE = 1

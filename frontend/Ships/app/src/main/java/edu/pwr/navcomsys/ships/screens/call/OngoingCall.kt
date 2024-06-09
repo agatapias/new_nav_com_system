@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import edu.pwr.navcomsys.ships.R
+import edu.pwr.navcomsys.ships.ui.component.ShipButton
 import edu.pwr.navcomsys.ships.ui.theme.Dark
 import edu.pwr.navcomsys.ships.ui.theme.DarkBlue
 import edu.pwr.navcomsys.ships.ui.theme.Dimensions
@@ -75,6 +76,14 @@ fun OngoingCall(
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.surface
                 )
+            }
+
+            ShipButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = "Nagraj",
+                textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+            ) {
+                // TODO
             }
 
             Box(
