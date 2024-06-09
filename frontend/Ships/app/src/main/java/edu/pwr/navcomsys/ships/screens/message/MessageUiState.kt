@@ -2,9 +2,11 @@ package edu.pwr.navcomsys.ships.screens.message
 
 import androidx.annotation.DrawableRes
 import edu.pwr.navcomsys.ships.R
+import edu.pwr.navcomsys.ships.data.dto.ChatMessageDto
 
 data class MessageUiState(
     val messages: List<MessageData> = listOf(MessageData.mock(), MessageData.mock(), MessageData.mock()),
+    val messageBuffer: List<ChatMessageDto> = emptyList(),
     val isLoading: Boolean = false
 )
 

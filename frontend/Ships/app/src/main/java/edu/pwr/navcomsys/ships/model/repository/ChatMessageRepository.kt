@@ -22,4 +22,8 @@ class ChatMessageRepository(
         val username = userLocalDataSource.getUser()?.username
         return username?.let { chatMessageDataSource.getConversationUsers(it) } ?: emptyList()
     }
+
+    suspend fun getAllMessages(): List<ChatMessage> {
+        return chatMessageDataSource.getMessages()
+    }
 }
