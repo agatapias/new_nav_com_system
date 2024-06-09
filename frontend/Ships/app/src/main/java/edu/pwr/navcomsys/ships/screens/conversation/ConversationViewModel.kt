@@ -9,6 +9,14 @@ class ConversationViewModel() : ViewModel() {
     private val _uiState = MutableStateFlow(ConversationUiState())
     val uiState = _uiState.asStateFlow()
 
+    private var conversationUsername: String? = null
+
+    fun setUsername(name: String?) {
+        if (conversationUsername == null || conversationUsername != name) {
+            conversationUsername = name
+        }
+    }
+
     fun onInputChange(value: String) {
         _uiState.update {
             it.copy(input = value)

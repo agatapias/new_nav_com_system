@@ -1,6 +1,7 @@
 package edu.pwr.navcomsys.ships.screens.conversation
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -45,6 +47,12 @@ fun ConversationScreen(
     val viewModel: ConversationViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val uiInteraction = ConversationUiInteraction.default(viewModel)
+
+    LaunchedEffect(Unit) {
+        viewModel.setUsername(navigation.name)
+        Log.d("Conv", "name: ${navigation.name}")
+    }
+
     ConversationScreenContent(
         uiState = uiState,
         uiInteraction = uiInteraction

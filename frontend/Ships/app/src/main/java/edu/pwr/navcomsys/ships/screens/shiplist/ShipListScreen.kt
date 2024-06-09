@@ -30,20 +30,24 @@ import edu.pwr.navcomsys.ships.ui.theme.WidthSpacer
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ShipListScreen() {
+fun ShipListScreen(
+    navigation: ShipListNavigation
+) {
     val viewModel: ShipListViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val uiInteraction = ShipListUiInteraction.default(viewModel)
     ShipListScreenContent(
         uiState = uiState,
-        uiInteraction = uiInteraction
+        uiInteraction = uiInteraction,
+        navigation = navigation
     )
 }
 
 @Composable
 private fun ShipListScreenContent(
     uiState: ShipListUiState,
-    uiInteraction: ShipListUiInteraction
+    uiInteraction: ShipListUiInteraction,
+    navigation: ShipListNavigation
 ) {
     if (uiState.isLoading) {
         Loader(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
@@ -64,7 +68,8 @@ private fun ShipListScreenContent(
             items(uiState.ships) {
                 ShipItem(
                     data = it,
-                    uiInteraction = uiInteraction
+                    uiInteraction = uiInteraction,
+                    navigation = navigation
                 )
             }
 
@@ -77,6 +82,12 @@ private fun ShipListScreenContent(
     ShipMarkerPopUp(
         isVisible = uiState.shipDialogData != null,
         ship = uiState.shipDialogData?.toShipData(),
+        onCallClick = {/*TODO*/ },
+        onConversationClick = {
+            uiState.shipDialogData?.shipName?.let {
+                navigation.openConversation(it)
+            }
+        },
         onClose = uiInteraction::onCloseDialog
     )
 }
@@ -84,7 +95,8 @@ private fun ShipListScreenContent(
 @Composable
 private fun ShipItem(
     data: LocationDto,
-    uiInteraction: ShipListUiInteraction
+    uiInteraction: ShipListUiInteraction,
+    navigation: ShipListNavigation
 ) {
     val shipText = buildAnnotatedString {
         withStyle(
@@ -144,7 +156,7 @@ private fun ShipItem(
                 textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                 type = ShipButtonType.Secondary
             ) {
-                // TODO
+                navigation.openConversation(data.username)
             }
         }
         Dimensions.space20.HeightSpacer()

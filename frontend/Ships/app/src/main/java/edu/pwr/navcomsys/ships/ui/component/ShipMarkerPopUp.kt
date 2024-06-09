@@ -53,6 +53,8 @@ data class ShipLocation(
 fun ShipMarkerPopUp(
     isVisible: Boolean,
     ship: ShipData?,
+    onCallClick: () -> Unit,
+    onConversationClick: () -> Unit,
     onClose: () -> Unit
 ) {
     if (isVisible) {
@@ -74,13 +76,13 @@ fun ShipMarkerPopUp(
                 Dimensions.space10.HeightSpacer()
                 ShipButton(
                     text = stringResource(id = R.string.s10),
-                    onClick = { /*TODO*/ }
+                    onClick = onCallClick
                 )
                 Dimensions.space14.HeightSpacer()
                 ShipButton(
                     text = stringResource(id = R.string.s11),
                     type = ShipButtonType.Secondary,
-                    onClick = { /*TODO*/ }
+                    onClick = onConversationClick
                 )
             }
         }

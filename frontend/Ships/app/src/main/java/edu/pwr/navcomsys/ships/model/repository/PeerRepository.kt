@@ -49,6 +49,7 @@ class PeerRepository(
     private val hostTimerMap: MutableMap<String, Timer> = mutableMapOf()
 
     init {
+        mockLocations()
         // Listen to location changes
         if (ActivityCompat.checkSelfPermission(
                 context,

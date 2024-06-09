@@ -18,6 +18,7 @@ import edu.pwr.navcomsys.ships.screens.main.MainScreen
 import edu.pwr.navcomsys.ships.screens.message.MessageNavigation
 import edu.pwr.navcomsys.ships.screens.message.MessageScreen
 import edu.pwr.navcomsys.ships.screens.phone.PhoneScreen
+import edu.pwr.navcomsys.ships.screens.shiplist.ShipListNavigation
 import edu.pwr.navcomsys.ships.screens.shiplist.ShipListScreen
 
 @Composable
@@ -55,7 +56,7 @@ fun NavGraph(
         }
 
         composable(Screen.ShipList.path) {
-            ShipListScreen()
+            ShipListScreen(navigation = ShipListNavigation.default(navController))
         }
 
         composable(Screen.Dashboard.path) {
