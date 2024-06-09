@@ -2,8 +2,8 @@ package edu.pwr.navcomsys.ships.model.wifidirect
 
 import android.util.Log
 import com.google.gson.Gson
-import edu.pwr.navcomsys.ships.data.dto.AudioMessageDto
 import edu.pwr.navcomsys.ships.data.database.ChatMessage
+import edu.pwr.navcomsys.ships.data.dto.AudioMessageDto
 import edu.pwr.navcomsys.ships.data.dto.ChatMessageDto
 import edu.pwr.navcomsys.ships.data.dto.IPBroadcastDto
 import edu.pwr.navcomsys.ships.data.dto.IPInfoDto
@@ -130,7 +130,5 @@ class MessageListener(
     }
 
 
-    private fun doNothing() {
-
-    }
+    private fun doNothing() {}
 }
