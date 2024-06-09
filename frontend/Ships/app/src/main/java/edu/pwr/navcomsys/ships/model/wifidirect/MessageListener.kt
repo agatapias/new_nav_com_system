@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.gson.Gson
 import edu.pwr.navcomsys.ships.data.dto.IPBroadcastDto
 import edu.pwr.navcomsys.ships.data.dto.IPInfoDto
+import edu.pwr.navcomsys.ships.data.dto.LocationDto
 import edu.pwr.navcomsys.ships.data.dto.MessageDto
 import edu.pwr.navcomsys.ships.data.enums.MessageType
 import edu.pwr.navcomsys.ships.model.repository.PeerRepository
@@ -88,7 +89,8 @@ class MessageListener(
     }
 
     private fun handleLocationMessage(msg: String) {
-
+        val broadcast = gson.fromJson(msg, LocationDto::class.java)
+        peerRepository.updateLocation(broadcast)
     }
 
     private fun doNothing() {

@@ -38,7 +38,7 @@ fun ShipButton(
 ) {
     val textColor =
         if (type == ShipButtonType.Alternative) MaterialTheme.colorScheme.onBackground
-        else MaterialTheme.colorScheme.onSecondary
+        else Color.White
     val colors = when (type) {
         ShipButtonType.Primary -> ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,

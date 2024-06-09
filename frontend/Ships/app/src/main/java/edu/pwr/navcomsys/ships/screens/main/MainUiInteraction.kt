@@ -1,10 +1,10 @@
 package edu.pwr.navcomsys.ships.screens.main
 
-import com.mapbox.mapboxsdk.annotations.Marker
+import edu.pwr.navcomsys.ships.data.dto.LocationDto
 
 interface MainUiInteraction {
     fun onMapLoaded()
-    fun onShipClick(marker: Marker)
+    fun onShipClick(ship: LocationDto)
     fun onClosePopUp()
 
     companion object {
@@ -13,8 +13,8 @@ interface MainUiInteraction {
                 viewModel?.onMapLoaded()
             }
 
-            override fun onShipClick(marker: Marker) {
-                viewModel?.onShipClick(marker)
+            override fun onShipClick(ship: LocationDto) {
+                viewModel?.onShipClick(ship)
             }
 
             override fun onClosePopUp() {

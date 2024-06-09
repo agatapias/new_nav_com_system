@@ -1,9 +1,10 @@
 package edu.pwr.navcomsys.ships.screens.main
 
-import com.mapbox.mapboxsdk.annotations.Marker
+import edu.pwr.navcomsys.ships.data.dto.LocationDto
 
 data class MainUiState(
+    val shipLocations: List<LocationDto> = emptyList(),
     val isLoading: Boolean = true,
     val isPopUpVisible: Boolean = false,
-    val marker: Marker? = null
+    val ship: LocationDto? = null
 )

@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.Inet4Address
@@ -19,6 +20,8 @@ import java.net.InetSocketAddress
 import java.net.NetworkInterface
 import java.net.Socket
 import java.net.SocketException
+import java.util.Timer
+import java.util.TimerTask
 
 
 private const val TAG = "PeerRepository"
@@ -29,6 +32,10 @@ class PeerRepository {
     private val scope = CoroutineScope(Dispatchers.IO)
     private val gson = Gson()
     var deviceName: String? = null
+
+    init {
+        mockLocations()
+    }
 
     fun sendMessage(host: String, msg: String) {
         scope.launch {
@@ -93,7 +100,53 @@ class PeerRepository {
     }
 
     fun updateLocation(location: LocationDto) {
-        // TODO: implement
+        val currentLocations = locationFlow.value
+        val newLocations = currentLocations.map {
+            if (it.ipAddress == location.ipAddress) {
+                location
+            } else {
+                it
+            }
+        }
+        locationFlow.update {
+            newLocations
+        }
+    }
+
+    private fun mockLocations() {
+        var diff = 0
+        val timer = Timer()
+        val task = object : TimerTask() {
+            override fun run() {
+                println("Task executed at: ${System.currentTimeMillis()}")
+                locationFlow.update {
+                    listOf(
+                        LocationDto.mock().copy(
+                            username = "Miś",
+                            ipAddress = "10.11",
+                            xCoordinate = 12.343 + diff,
+                            yCoordinate = 12.442 + diff
+                        ),
+                        LocationDto.mock().copy(
+                            username = "Miś 2",
+                            ipAddress = "10.12",
+                            xCoordinate = 9.343 + diff,
+                            yCoordinate = 9.442 + diff
+                        ),
+                        LocationDto.mock().copy(
+                            username = "Miś 3",
+                            ipAddress = "10.13",
+                            xCoordinate = 16.343 + diff,
+                            yCoordinate = 24.442 + diff
+                        )
+                    )
+                }
+                diff++
+            }
+        }
+
+        // Schedule the task to run every 5 seconds with an initial delay of 0 seconds
+        timer.schedule(task, 0, 5000)
     }
 
     private fun getLocalIPAddress(): ByteArray? {
