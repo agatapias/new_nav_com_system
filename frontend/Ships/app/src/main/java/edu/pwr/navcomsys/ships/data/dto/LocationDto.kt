@@ -10,12 +10,12 @@ data class LocationDto(
 ) {
     companion object {
         fun mock() = LocationDto(
-            username = "Miś",
-            shipName = "Miś's ship",
-            description = "Best ship",
+            username = "andrew",
+            shipName = "Statek Rosa",
+            description = "Duży statek towarowy",
             ipAddress = "103.42.56.9",
-            xCoordinate = 14.987,
-            yCoordinate = 13.232
+            xCoordinate = 51.123733,
+            yCoordinate = 17.085849
         )
     }
 }

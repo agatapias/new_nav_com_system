@@ -4,7 +4,6 @@ data class CallUiState(
     val callStatus: CallStatus = CallStatus.Incoming,
     val caller: String = "Steven Jobs",
     val receiver: String = "",
-    val isOngoing: Boolean = false,
     val callTime: String = "00:01",
     val isRecording: Boolean = false,
 )

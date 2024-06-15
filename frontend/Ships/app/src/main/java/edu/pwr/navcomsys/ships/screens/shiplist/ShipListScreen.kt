@@ -10,6 +10,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,6 +28,10 @@ import edu.pwr.navcomsys.ships.ui.component.ShipMarkerPopUp
 import edu.pwr.navcomsys.ships.ui.theme.Dimensions
 import edu.pwr.navcomsys.ships.ui.theme.HeightSpacer
 import edu.pwr.navcomsys.ships.ui.theme.WidthSpacer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -36,6 +41,17 @@ fun ShipListScreen(
     val viewModel: ShipListViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val uiInteraction = ShipListUiInteraction.default(viewModel)
+
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.navigationEvent.collectLatest { ip ->
+                ip?.let {
+                    navigation.openPhone(ip+"|I")
+                }
+            }
+        }
+    }
+
     ShipListScreenContent(
         uiState = uiState,
         uiInteraction = uiInteraction,
@@ -147,7 +163,7 @@ private fun ShipItem(
                 text = "Zadzwoń",
                 textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             ) {
-                // TODO
+                uiInteraction.onCall(data.ipAddress)
             }
             Dimensions.space14.WidthSpacer()
             ShipButton(

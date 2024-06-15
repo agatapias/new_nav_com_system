@@ -1,5 +1,6 @@
 package edu.pwr.navcomsys.ships.screens.call
 
+import android.util.Log
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import edu.pwr.navcomsys.ships.ui.navigation.getArguments
@@ -7,6 +8,7 @@ import edu.pwr.navcomsys.ships.ui.navigation.getArguments
 interface CallNavigation {
     val ip: String?
     val type: CallStatus
+    val toUsername: String?
     fun goBack()
 
     companion object {
@@ -20,6 +22,9 @@ interface CallNavigation {
             override val type: CallStatus
                 get() = getType(backStackEntry)
 
+            override val toUsername: String?
+                get() = backStackEntry.getArguments()[2]
+
             override fun goBack() {
                 navController.popBackStack()
             }
@@ -29,8 +34,9 @@ interface CallNavigation {
 
 private fun getType(backStackEntry: NavBackStackEntry): CallStatus {
     val value = backStackEntry.getArguments()[1]
-    if (value == "O")
-        return CallStatus.Outgoing
+    Log.d("Call", "value: $value")
+    return if (value == "O")
+        CallStatus.Outgoing
     else
-        return CallStatus.Incoming
+        CallStatus.Incoming
 }

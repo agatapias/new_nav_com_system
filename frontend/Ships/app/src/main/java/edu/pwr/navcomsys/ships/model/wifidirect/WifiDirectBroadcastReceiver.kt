@@ -155,9 +155,9 @@ class WiFiDirectBroadcastReceiver(
         } else {
             // We are disconnected
             Log.d(TAG, "Disconnected from peer")
-            peerRepository.onDisconnectPeer()
             onDisconnected()
         }
+        peerRepository.onDisconnectPeer()
     }
 
     private fun requestGroupInfo() {

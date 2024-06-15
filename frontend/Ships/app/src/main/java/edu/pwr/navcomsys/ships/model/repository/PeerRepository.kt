@@ -38,8 +38,10 @@ class PeerRepository(
     locationManager: FusedLocationProviderClient,
     context: Context
 ) {
-    var connectedDevices: List<IPInfoDto> = mutableListOf()
-    val locationFlow: MutableStateFlow<List<LocationDto>> = MutableStateFlow(emptyList())
+    var connectedDevices: List<IPInfoDto> = mutableListOf(IPInfoDto(deviceName = "andrewphone", ipAddress = "103.42.56.9"))
+    val locationFlow: MutableStateFlow<List<LocationDto>> = MutableStateFlow(listOf(
+        LocationDto.mock()
+    )) //MutableStateFlow(emptyList())
     var deviceName: String? = null
 
     private val ownLocationFlow: MutableStateFlow<ShipLocation?> = MutableStateFlow(null)

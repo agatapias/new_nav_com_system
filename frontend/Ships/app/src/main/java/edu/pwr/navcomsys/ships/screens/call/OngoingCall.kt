@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -64,49 +65,52 @@ fun OngoingCall(
                 Text(
                     text = "Połączenie",
                     style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.surface
+                    color = Color.White
                 )
                 Dimensions.space2.HeightSpacer()
                 Text(
                     text = uiState.caller,
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.surface
+                    color = Color.White
                 )
                 Dimensions.space22.HeightSpacer()
                 Text(
                     text = uiState.callTime,
                     style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.surface
+                    color = Color.White
                 )
             }
 
-            val text = if (uiState.isRecording) "Stop" else "Nagrywaj"
-            ShipButton(
-                modifier = Modifier.fillMaxWidth(),
-                text = text,
-                textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-            ) {
-                uiInteraction.onRecordPress()
-            }
-
-            Dimensions.space22.HeightSpacer()
-
-            Box(
+            Column(
                 modifier = Modifier
-                    .size(80.dp)
-                    .clip(CircleShape)
-                    .background(color = Red)
                     .align(Alignment.BottomCenter)
-                    .clickable { uiInteraction.endCall() }
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    modifier = Modifier
-                        .size(45.dp)
-                        .align(Alignment.Center),
-                    painter = painterResource(id = R.drawable.ic_phone_down),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.surface)
+                val text = if (uiState.isRecording) "Stop" else "Nagrywaj"
+                ShipButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = text,
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    onClick = { uiInteraction.onRecordPress() }
                 )
+                Dimensions.space22.HeightSpacer()
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape)
+                        .background(color = Red)
+                        .clickable { uiInteraction.endCall() }
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .size(45.dp)
+                            .align(Alignment.Center),
+                        painter = painterResource(id = R.drawable.ic_phone_down),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.surface)
+                    )
+                }
             }
         }
     }

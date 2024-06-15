@@ -11,6 +11,7 @@ import edu.pwr.navcomsys.ships.data.dto.AudioMessageDto
 import edu.pwr.navcomsys.ships.data.dto.AudioMessageType
 import edu.pwr.navcomsys.ships.data.enums.MessageType
 import edu.pwr.navcomsys.ships.model.repository.PeerRepository
+import edu.pwr.navcomsys.ships.model.repository.UserInfoRepository
 import edu.pwr.navcomsys.ships.model.wifidirect.MessageListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,13 +23,11 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 class CallViewModel(
     private val peerRepository: PeerRepository,
     private val messageListener: MessageListener,
+    private val userInfoRepository: UserInfoRepository,
     private val context: Context
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CallUiState())
@@ -42,21 +41,23 @@ class CallViewModel(
     private val queueFlow: MutableStateFlow<ByteArray?> = MutableStateFlow(null)
 
     private var recorder: MediaRecorder? = null
-    private var folderPath: String = context.filesDir.path + "audiodata/cache"
     private var mediaPlayer: MediaPlayer? = null
 
 
-    private val fileName = "${folderPath}/Macaw-${
-        SimpleDateFormat("ddMMyyyy-HHmmss", Locale.getDefault()).format(
-            Calendar.getInstance().time
-        )
-    }.wav"
+    private val path = context.filesDir.path + "/cache/audio"
+    private val fileName = "audio.wav"
+    private val fullFileName = path + fileName
 
-    fun init(newIpAddress: String?, type: CallStatus) {
-        _uiState.update {
-            it.copy(
-                callStatus = type
-            )
+    fun init(newIpAddress: String?, type: CallStatus, name: String) {
+        Log.d("Call", "CallScreen init called")
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    callStatus = type,
+                    caller = name,
+                    receiver = userInfoRepository.getUser()?.username ?: ""
+                )
+            }
         }
         if (ipAddress == null || ipAddress != newIpAddress) {
             ipAddress = newIpAddress
@@ -64,9 +65,9 @@ class CallViewModel(
         listenToAudioMessages()
     }
 
-    fun sendRecording() {
+    private fun sendRecording() {
         val ip = ipAddress ?: return
-        val byteArray = readFileToByteArray(fileName)
+        val byteArray = readFileToByteArray(fullFileName)
         val acceptMessage = AudioMessageDto(
             fromAddress = peerRepository.getOwnIpInfo().ipAddress,
             toAddress = ip,
@@ -78,6 +79,7 @@ class CallViewModel(
     }
 
     fun acceptConversation() {
+        Log.d("Call", "accept send")
         // send accept signal from peer repo
         val ip = ipAddress ?: return
         val acceptMessage = AudioMessageDto(
@@ -87,10 +89,21 @@ class CallViewModel(
         )
         val json = peerRepository.convertToJson(acceptMessage, MessageType.AUDIO)
         peerRepository.sendMessage(ip, json)
+        Log.d("Call", "accept sent!!")
+
+        _uiState.update {
+            it.copy(
+                callStatus = CallStatus.Ongoing
+            )
+        }
     }
 
     fun endConversation() {
         // send ending signal from peer repo
+        viewModelScope.launch(Dispatchers.Default) {
+            _navigationEvent.emit(true)
+        }
+
         val ip = ipAddress ?: return
         val acceptMessage = AudioMessageDto(
             fromAddress = peerRepository.getOwnIpInfo().ipAddress,
@@ -101,20 +114,24 @@ class CallViewModel(
         peerRepository.sendMessage(ip, json)
     }
 
-    fun startRecording() {
+    private fun startRecording() {
+//        val time = SimpleDateFormat("ddMMyyyy-HHmmss", Locale.getDefault()).format(
+//            Calendar.getInstance().time
+//        )
+        Log.d("Call", "path: $path")
+        val dir = File(path)
+        if (!dir.exists()) dir.mkdirs()
+
         recorder = MediaRecorder().apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            setOutputFile(fileName)
             setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB)
+            setOutputFile(fullFileName)
         }
 
         try {
             recorder?.prepare()
             recorder?.start()
-            _uiState.update {
-                it.copy(isRecording = true)
-            }
         } catch (e: IOException) {
             _uiState.update {
                 it.copy(isRecording = false)
@@ -141,7 +158,13 @@ class CallViewModel(
     }
 
     fun onRecordPress() {
-        if (_uiState.value.isRecording) {
+        Log.d("Call", "onRecordPress called")
+        val newState = !_uiState.value.isRecording
+        Log.d("Call", "newState: $newState")
+        _uiState.update {
+            it.copy(isRecording = newState)
+        }
+        if (!newState) {
             stopRecording()
             sendRecording()
         } else {

@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -61,15 +62,15 @@ fun IncomingCall(
             ) {
                 Dimensions.space40.HeightSpacer()
                 Text(
-                    text = "Połączenie",
+                    text = "Łączenie...",
                     style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.surface
+                    color = Color.White
                 )
                 Dimensions.space2.HeightSpacer()
                 Text(
-                    text = uiState.caller,
+                    text = uiState.receiver,
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.surface
+                    color = Color.White
                 )
             }
 

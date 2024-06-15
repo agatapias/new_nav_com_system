@@ -81,11 +81,16 @@ class MainActivity : ComponentActivity(){
 
         Log.d("Main", BuildConfig.VERSION_CODE.toString())
         // Check if location permissions are granted
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (
+            ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+        ) {
             // Request location permissions
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.NEARBY_WIFI_DEVICES),
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.NEARBY_WIFI_DEVICES, android.Manifest.permission.RECORD_AUDIO, android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
         } else {
@@ -160,8 +165,9 @@ fun AppContent(hasNewMessage: Boolean = false) {
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.navigationEvent.collectLatest { ip ->
+                Log.d("Call", "Navigating to call ip: $ip")
                 ip?.let {
-                    navController.navigate(Screen.Call.path.appendArguments(ip+"|I"))
+                    navController.navigate(Screen.Call.path.appendArguments(ip))
                 }
             }
         }

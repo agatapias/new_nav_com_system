@@ -6,6 +6,7 @@ import edu.pwr.navcomsys.ships.ui.navigation.appendArguments
 
 interface ShipListNavigation {
     fun openConversation(name: String)
+    fun openPhone(ip: String)
 
     companion object {
         fun default(
@@ -14,6 +15,10 @@ interface ShipListNavigation {
 
             override fun openConversation(name: String) {
                 navController.navigate(Screen.Conversation.path.appendArguments(name))
+            }
+
+            override fun openPhone(ip: String) {
+                navController.navigate(Screen.Call.path.appendArguments(ip+"|I"))
             }
 
         }

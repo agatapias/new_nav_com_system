@@ -1,5 +1,6 @@
 package edu.pwr.navcomsys.ships.screens.call
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,10 +19,13 @@ fun CallScreen(
     val uiInteraction = CallUiInteraction.default(viewModel)
 
     LaunchedEffect(Unit) {
-        viewModel.init(navigation.ip, navigation.type)
+        viewModel.init(navigation.ip, navigation.type, navigation.toUsername ?: "")
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.navigationEvent.collect {
-                navigation.goBack()
+                Log.d("Call", "navigating back, value: $it")
+                if (it == true) {
+                    navigation.goBack()
+                }
             }
         }
     }
