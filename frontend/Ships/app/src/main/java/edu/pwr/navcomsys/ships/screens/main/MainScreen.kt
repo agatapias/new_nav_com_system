@@ -99,7 +99,7 @@ private fun MainScreenContent(
                     getMapAsync { mapboxMap ->
                         mapboxMapState = mapboxMap
                         mapboxMap.setStyle(
-                            Style.Builder().fromUri("https://demotiles.maplibre.org/style.json")
+                            Style.Builder().fromUri("https://api.maptiler.com/maps/outdoor-v2/style.json?key=9FsCyPVnO2Rt50rJ5fsc")
                         ) {
                             Log.d("Map", "Map is ready")
                             uiInteraction.onMapLoaded()
